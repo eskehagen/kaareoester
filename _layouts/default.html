@@ -6,21 +6,15 @@
   <title>{% if page.title %}{{ page.title }} · {{ site.title }}{% else %}{{ site.title }} · {{ site.description }}{% endif %}</title>
   <meta name="description" content="{% if page.excerpt %}{{ page.excerpt | strip_html | truncate: 155 }}{% else %}{{ site.description }}{% endif %}">
   <link rel="stylesheet" href="{{ '/assets/css/style.css' | relative_url }}">
-  <link rel="canonical" href="{{ page.url | absolute_url }}">
-  {% feed_meta %}
-  {% seo %}
 </head>
 <body>
 
-  <!-- Navigation -->
   <nav class="site-nav">
     <div class="container">
       <a href="{{ '/' | relative_url }}" class="site-title">Kaare Øster <span>· fagforfatter</span></a>
-
       <button class="nav-toggle" onclick="this.nextElementSibling.classList.toggle('open')" aria-label="Menu">
         <span></span><span></span><span></span>
       </button>
-
       <ul class="nav-links">
         <li><a href="{{ '/' | relative_url }}" {% if page.url == '/' %}class="active"{% endif %}>Hjem</a></li>
         <li><a href="{{ '/biografi/' | relative_url }}" {% if page.url contains 'biografi' %}class="active"{% endif %}>Biografi</a></li>
@@ -32,12 +26,10 @@
     </div>
   </nav>
 
-  <!-- Content -->
   <main>
     {{ content }}
   </main>
 
-  <!-- Footer -->
   <footer class="site-footer">
     <div class="container">
       <div>
@@ -46,7 +38,7 @@
       </div>
       <div style="font-size: 0.82rem; text-align: right;">
         <div><a href="mailto:kaos@kaareoester.dk">kaos@kaareoester.dk</a></div>
-        <div style="margin-top: 0.5rem; opacity: 0.5;">© {{ 'now' | date: "%Y" }} Kaare Øster</div>
+        <div style="margin-top: 0.5rem; opacity: 0.5;">© 2025 Kaare Øster</div>
       </div>
     </div>
   </footer>
