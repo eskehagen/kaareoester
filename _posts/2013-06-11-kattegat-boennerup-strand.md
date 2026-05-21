@@ -3,11 +3,9 @@ layout: post
 title: "Kattegat - Bønnerup Strand"
 date: 2013-06-11
 categories:
-  - "Danmark"
   - "Rejser"
-tags:
-  - "Bønnerup"
-image: "http://www.kaareoester.dk/wp-content/uploads/2017/06/DSC_0979.jpg"
+  - "Danmark"
+image: "/assets/images/2013-06-11-dsc_0979.jpg"
 ---
 
 *Bryozoerne skabte klinterne ved Sangstrup, se selv:*
