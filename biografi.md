@@ -7,9 +7,7 @@ description: "Fagforfatter, læremidler, redaktion og konsulent"
 
 <div class="bio-grid">
   <div>
-    <!-- Indsæt dit eget foto her -->
-    <!-- <img src="/assets/images/kaare-oester.jpg" alt="Kaare Øster" class="bio-photo"> -->
-    <div style="width: 100%; aspect-ratio: 3/4; background: var(--color-accent-light); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 3rem;">👤</div>
+    <img src="/assets/images/kaare-Oester.jpg" alt="Kaare Øster" class="bio-photo">
   </div>
 
   <div>

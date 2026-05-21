@@ -391,6 +391,7 @@ img { max-width: 100%; height: auto; display: block; border-radius: var(--radius
 /* ============================================ BIO */
 .bio-grid { display: grid; grid-template-columns: 220px 1fr; gap: 3.5rem; align-items: start; margin-top: 2rem; }
 .bio-placeholder { width: 100%; aspect-ratio: 3/4; background: linear-gradient(160deg, var(--sand) 0%, var(--sand-dark) 100%); border-radius: var(--radius); display: flex; align-items: center; justify-content: center; font-size: 4rem; box-shadow: var(--shadow-md); }
+.bio-photo { width: 100%; aspect-ratio: 1/1; object-fit: cover; object-position: center top; border-radius: var(--radius); box-shadow: var(--shadow-md); display: block; }
 
 /* ============================================ CONTACT */
 .contact-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); padding: 2rem 2.5rem; max-width: 440px; margin: 2rem 0; box-shadow: var(--shadow-sm); }
