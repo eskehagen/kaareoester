@@ -5,6 +5,7 @@ date: 2017-06-13
 categories:
   - "Rejser"
   - "Verden"
+image: "/assets/images/2017-06-13-bhutan-trongsa.jpg"
 ---
 
 ## Læs om Bhutan projektet
