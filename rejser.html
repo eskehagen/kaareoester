@@ -15,15 +15,24 @@ permalink: /rejser/
         {% if post.categories contains 'Rejser' or post.categories contains 'Arktis' or post.categories contains 'Danmark' %}
         <div class="post-card">
           {% if post.image %}
-            <img src="{{ post.image }}" alt="{{ post.title }}" class="post-card-image">
+            <div class="post-card-image-wrap">
+              <img src="{{ post.image }}" alt="{{ post.title }}" class="post-card-image">
+            </div>
           {% else %}
-            <div class="post-card-image-placeholder">✈️</div>
+            <div class="post-card-placeholder
+              {% if post.categories contains 'Arktis' %}ph-arctic
+              {% elsif post.categories contains 'Danmark' %}ph-teal
+              {% else %}ph-warm{% endif %}">
+              {% if post.categories contains 'Arktis' %}❄️
+              {% elsif post.categories contains 'Danmark' %}⛵
+              {% else %}🌍{% endif %}
+            </div>
           {% endif %}
           <div class="post-card-body">
             <div class="post-card-meta">
               {{ post.date | date: "%Y" }}
             </div>
-            <h2><a href="{{ post.url }}">{{ post.title }}</a></h2>
+            <h2><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h2>
             {% if post.excerpt %}
               <p class="post-card-excerpt">{{ post.excerpt | strip_html | truncate: 110 }}</p>
             {% endif %}

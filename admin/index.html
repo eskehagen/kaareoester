@@ -7,7 +7,7 @@ permalink: /admin/
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Nyt indlæg · Kaare Øster</title>
+  <title>Admin · Kaare Øster</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500;600&display=swap');
 
@@ -23,6 +23,9 @@ permalink: /admin/
       --success-bg: #e8f5ee;
       --error: #b03030;
       --error-bg: #fdf0f0;
+      --warning-bg: #fff8e1;
+      --warning-border: #f0c848;
+      --warning-text: #7a5800;
       --radius: 8px;
     }
 
@@ -96,9 +99,7 @@ permalink: /admin/
       margin-bottom: 1.5rem;
     }
 
-    .setup-screen ol a {
-      color: var(--accent);
-    }
+    .setup-screen ol a { color: var(--accent); }
 
     .setup-hint {
       background: var(--accent-light);
@@ -130,6 +131,72 @@ permalink: /admin/
       margin-bottom: 2.5rem;
     }
 
+    /* --- Tab navigation --- */
+    .tab-nav {
+      display: flex;
+      border-bottom: 2px solid var(--border);
+      margin-bottom: 2.5rem;
+    }
+
+    .tab-btn {
+      padding: 0.7rem 1.6rem;
+      background: none;
+      border: none;
+      border-bottom: 3px solid transparent;
+      margin-bottom: -2px;
+      cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: var(--muted);
+      transition: color 0.15s;
+    }
+
+    .tab-btn.active {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+      font-weight: 600;
+    }
+
+    .tab-btn:hover:not(.active) { color: var(--text); }
+
+    /* --- Edit mode banner --- */
+    .edit-banner {
+      background: var(--warning-bg);
+      border: 1.5px solid var(--warning-border);
+      border-radius: var(--radius);
+      padding: 0.85rem 1.25rem;
+      margin-bottom: 1.75rem;
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .edit-banner.visible { display: flex; }
+
+    .edit-banner-text {
+      font-size: 0.9rem;
+      color: var(--warning-text);
+    }
+
+    .edit-banner-title { font-weight: 600; }
+
+    .btn-cancel-edit {
+      font-size: 0.82rem;
+      color: var(--muted);
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 0.35rem 0.85rem;
+      cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      white-space: nowrap;
+    }
+
+    .btn-cancel-edit:hover { color: var(--error); border-color: var(--error); }
+
     /* --- Form --- */
     .form-grid {
       display: grid;
@@ -156,7 +223,6 @@ permalink: /admin/
 
     input[type="text"],
     input[type="date"],
-    select,
     textarea {
       font-family: 'DM Sans', sans-serif;
       font-size: 0.97rem;
@@ -170,7 +236,7 @@ permalink: /admin/
       width: 100%;
     }
 
-    input:focus, select:focus, textarea:focus {
+    input:focus, textarea:focus {
       border-color: var(--accent);
       box-shadow: 0 0 0 3px rgba(42, 82, 152, 0.1);
     }
@@ -186,6 +252,45 @@ permalink: /admin/
       font-size: 0.78rem;
       color: var(--muted);
       margin-top: 0.35rem;
+    }
+
+    /* --- Multi-category checkboxes --- */
+    .checkbox-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      padding-top: 0.15rem;
+    }
+
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.45rem 0.85rem;
+      border: 1.5px solid var(--border);
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 0.88rem;
+      font-weight: normal;
+      text-transform: none;
+      letter-spacing: 0;
+      color: var(--text);
+      user-select: none;
+      transition: all 0.12s;
+    }
+
+    .checkbox-label input {
+      width: 14px;
+      height: 14px;
+      accent-color: var(--accent);
+      cursor: pointer;
+      margin: 0;
+    }
+
+    .checkbox-label:has(input:checked) {
+      border-color: var(--accent);
+      background: var(--accent-light);
+      color: var(--accent);
     }
 
     /* --- Image upload --- */
@@ -241,6 +346,31 @@ permalink: /admin/
       font-size: 0.8rem;
       margin-top: 0.25rem;
       padding: 0;
+    }
+
+    .current-image-wrap {
+      display: none;
+      margin-top: 0.75rem;
+      padding: 0.75rem;
+      background: var(--bg);
+      border-radius: 6px;
+      border: 1px solid var(--border);
+    }
+
+    .current-image-wrap.visible { display: block; }
+
+    .current-image-label {
+      font-size: 0.75rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.5rem;
+    }
+
+    .current-image-wrap img {
+      max-height: 120px;
+      border-radius: 4px;
+      border: 1px solid var(--border);
     }
 
     /* --- Actions --- */
@@ -413,11 +543,62 @@ permalink: /admin/
 
     .cheatsheet-desc { color: var(--muted); }
 
+    /* --- Post list (edit tab) --- */
+    .post-list-loading {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .post-list-loading .spinner { margin: 0 auto 1rem; width: 24px; height: 24px; }
+
+    .post-list-btn {
+      width: 100%;
+      text-align: left;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1rem 1.25rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 0.5rem;
+      transition: border-color 0.15s, box-shadow 0.15s;
+      font-family: 'DM Sans', sans-serif;
+    }
+
+    .post-list-btn:hover {
+      border-color: var(--accent);
+      box-shadow: 0 2px 8px rgba(42,82,152,0.1);
+    }
+
+    .post-list-title {
+      font-size: 0.97rem;
+      font-weight: 500;
+      color: var(--text);
+    }
+
+    .post-list-meta {
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-top: 0.2rem;
+    }
+
+    .post-list-arrow {
+      color: var(--muted);
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+
     @media (max-width: 600px) {
       .form-grid { grid-template-columns: 1fr; }
       .cheatsheet-grid { grid-template-columns: 1fr; }
       .form-actions { flex-direction: column; }
       .btn { width: 100%; justify-content: center; }
+      .tab-btn { padding: 0.6rem 1rem; font-size: 0.88rem; }
     }
   </style>
 </head>
@@ -425,7 +606,7 @@ permalink: /admin/
 
 <header class="header">
   <div>
-    <div class="header-title">✍️ Kaare Øster · Nyt indlæg</div>
+    <div class="header-title">✍️ Kaare Øster · Admin</div>
     <div class="header-sub">Skriv og publicer direkte til hjemmesiden</div>
   </div>
   <a href="../" class="header-back">← Tilbage til hjemmesiden</a>
@@ -481,110 +662,155 @@ permalink: /admin/
     <button class="btn-reset" onclick="resetSetup()">Skift token</button>
   </div>
 
-  <h1 class="page-title">Nyt indlæg</h1>
-  <p class="page-sub">Udfyld felterne nedenfor og klik "Publicer" — indlægget er online inden for 2 minutter.</p>
+  <!-- Tab navigation -->
+  <nav class="tab-nav">
+    <button class="tab-btn active" id="tabBtnNew" onclick="switchTab('new')">✏️ Nyt indlæg</button>
+    <button class="tab-btn" id="tabBtnEdit" onclick="switchTab('edit')">📂 Rediger indlæg</button>
+  </nav>
 
-  <div class="form-grid">
+  <!-- ===== NY INDLÆG TAB ===== -->
+  <div id="newTab">
 
-    <div class="field form-full">
-      <label>Overskrift *</label>
-      <input type="text" id="postTitle" placeholder="Skriv din overskrift her...">
-    </div>
-
-    <div class="field">
-      <label>Dato</label>
-      <input type="date" id="postDate">
-    </div>
-
-    <div class="field">
-      <label>Kategori</label>
-      <select id="postCategory">
-        <option value="Rejser">✈️ Rejser</option>
-        <option value="Udgivelser">📚 Udgivelser</option>
-        <option value="Projekter">🌿 Projekter</option>
-        <option value="Bøger">📖 Bøger</option>
-        <option value="Danmark">🇩🇰 Danmark</option>
-        <option value="Verden">🌍 Verden</option>
-        <option value="Arktis">❄️ Arktis</option>
-      </select>
-    </div>
-
-    <div class="field form-full">
-      <label>Forsidebillede (valgfrit)</label>
-      <div class="image-area" onclick="document.getElementById('imageFile').click()">
-        <input type="file" id="imageFile" accept="image/*" onchange="handleImage(event)">
-        <div class="image-area-icon">🖼️</div>
-        <div class="image-area-text">Klik for at vælge et billede</div>
-        <div class="image-area-sub">JPG, PNG eller WEBP · Max 5 MB</div>
+    <div class="edit-banner" id="editBanner">
+      <div class="edit-banner-text">
+        Du redigerer: <span class="edit-banner-title" id="editBannerTitle"></span>
       </div>
-      <div class="image-preview" id="imagePreview">
-        <img id="imagePreviewImg" src="" alt="">
-        <div class="image-preview-name" id="imagePreviewName"></div>
-        <button class="remove-image" onclick="removeImage()">✕ Fjern billede</button>
-      </div>
+      <button class="btn-cancel-edit" onclick="cancelEdit()">✕ Annuller redigering</button>
     </div>
 
-    <div class="field form-full">
-      <label>Tekst *</label>
-      <textarea id="postContent" placeholder="Skriv dit indlæg her...
+    <h1 class="page-title" id="formTitle">Nyt indlæg</h1>
+    <p class="page-sub" id="formSub">Udfyld felterne nedenfor og klik "Publicer" — indlægget er online inden for 2 minutter.</p>
+
+    <div class="form-grid">
+
+      <div class="field form-full">
+        <label>Overskrift *</label>
+        <input type="text" id="postTitle" placeholder="Skriv din overskrift her...">
+      </div>
+
+      <div class="field">
+        <label>Dato</label>
+        <input type="date" id="postDate">
+      </div>
+
+      <div class="field form-full">
+        <label>Kategori (vælg én eller flere)</label>
+        <div class="checkbox-group" id="categoryGroup">
+          <label class="checkbox-label"><input type="checkbox" value="Rejser"> ✈️ Rejser</label>
+          <label class="checkbox-label"><input type="checkbox" value="Udgivelser"> 📚 Udgivelser</label>
+          <label class="checkbox-label"><input type="checkbox" value="Projekter"> 🌿 Projekter</label>
+          <label class="checkbox-label"><input type="checkbox" value="Bøger"> 📖 Bøger</label>
+          <label class="checkbox-label"><input type="checkbox" value="Danmark"> 🇩🇰 Danmark</label>
+          <label class="checkbox-label"><input type="checkbox" value="Verden"> 🌍 Verden</label>
+          <label class="checkbox-label"><input type="checkbox" value="Arktis"> ❄️ Arktis</label>
+        </div>
+      </div>
+
+      <div class="field form-full">
+        <label>Forsidebillede (valgfrit)</label>
+
+        <!-- Existing image (shown in edit mode) -->
+        <div class="current-image-wrap" id="currentImageWrap">
+          <div class="current-image-label">Nuværende billede</div>
+          <img id="currentImagePreviewImg" src="" alt="">
+          <div style="margin-top: 0.5rem;">
+            <button class="remove-image" onclick="clearCurrentImage()">✕ Fjern nuværende billede</button>
+          </div>
+        </div>
+
+        <div class="image-area" onclick="document.getElementById('imageFile').click()" style="margin-top: 0.75rem;">
+          <input type="file" id="imageFile" accept="image/*" onchange="handleImage(event)">
+          <div class="image-area-icon">🖼️</div>
+          <div class="image-area-text" id="imageAreaText">Klik for at vælge et billede</div>
+          <div class="image-area-sub">JPG, PNG eller WEBP · Max 5 MB</div>
+        </div>
+        <div class="image-preview" id="imagePreview">
+          <img id="imagePreviewImg" src="" alt="">
+          <div class="image-preview-name" id="imagePreviewName"></div>
+          <button class="remove-image" onclick="removeImage()">✕ Fjern valgt billede</button>
+        </div>
+      </div>
+
+      <div class="field form-full">
+        <label>Tekst *</label>
+        <textarea id="postContent" placeholder="Skriv dit indlæg her...
 
 Du kan formatere teksten sådan:
 ## En overskrift
 **Fed tekst**
 *Kursiv tekst*
 - Punkt i liste"></textarea>
-      <div class="textarea-hint">Tip: Se formateringshjælp nedenfor ↓</div>
+        <div class="textarea-hint">Tip: Se formateringshjælp nedenfor ↓</div>
+      </div>
+
     </div>
 
-  </div>
+    <!-- Cheatsheet -->
+    <div class="cheatsheet">
+      <h4>Formateringshjælp</h4>
+      <div class="cheatsheet-grid">
+        <div class="cheatsheet-row">
+          <span class="cheatsheet-code">## Overskrift</span>
+          <span class="cheatsheet-desc">Underoverskrift</span>
+        </div>
+        <div class="cheatsheet-row">
+          <span class="cheatsheet-code">**fed**</span>
+          <span class="cheatsheet-desc">Fed tekst</span>
+        </div>
+        <div class="cheatsheet-row">
+          <span class="cheatsheet-code">*kursiv*</span>
+          <span class="cheatsheet-desc">Kursiv tekst</span>
+        </div>
+        <div class="cheatsheet-row">
+          <span class="cheatsheet-code">- punkt</span>
+          <span class="cheatsheet-desc">Punktliste</span>
+        </div>
+        <div class="cheatsheet-row">
+          <span class="cheatsheet-code">![tekst](url)</span>
+          <span class="cheatsheet-desc">Billede fra link</span>
+        </div>
+        <div class="cheatsheet-row">
+          <span class="cheatsheet-code">[tekst](url)</span>
+          <span class="cheatsheet-desc">Klikbart link</span>
+        </div>
+      </div>
+    </div>
 
-  <!-- Cheatsheet -->
-  <div class="cheatsheet">
-    <h4>Formateringshjælp</h4>
-    <div class="cheatsheet-grid">
-      <div class="cheatsheet-row">
-        <span class="cheatsheet-code">## Overskrift</span>
-        <span class="cheatsheet-desc">Underoverskrift</span>
-      </div>
-      <div class="cheatsheet-row">
-        <span class="cheatsheet-code">**fed**</span>
-        <span class="cheatsheet-desc">Fed tekst</span>
-      </div>
-      <div class="cheatsheet-row">
-        <span class="cheatsheet-code">*kursiv*</span>
-        <span class="cheatsheet-desc">Kursiv tekst</span>
-      </div>
-      <div class="cheatsheet-row">
-        <span class="cheatsheet-code">- punkt</span>
-        <span class="cheatsheet-desc">Punktliste</span>
-      </div>
-      <div class="cheatsheet-row">
-        <span class="cheatsheet-code">![tekst](url)</span>
-        <span class="cheatsheet-desc">Billede fra link</span>
-      </div>
-      <div class="cheatsheet-row">
-        <span class="cheatsheet-code">[tekst](url)</span>
-        <span class="cheatsheet-desc">Klikbart link</span>
+    <div id="statusMsg" class="status"></div>
+
+    <div class="form-actions">
+      <button class="btn btn-secondary" onclick="clearForm()">Ryd formular</button>
+      <button class="btn btn-primary" id="publishBtn" onclick="publishPost()">
+        Publicer indlæg →
+      </button>
+    </div>
+
+  </div><!-- end #newTab -->
+
+  <!-- ===== REDIGER INDLÆG TAB ===== -->
+  <div id="editTab" style="display:none;">
+    <h1 class="page-title">Rediger et indlæg</h1>
+    <p class="page-sub">Klik på et indlæg for at redigere det — du kan ændre tekst, tilføje billeder og opdatere kategorier.</p>
+
+    <div id="postListContainer">
+      <div class="post-list-loading">
+        <div class="spinner"></div>
+        Henter indlæg fra hjemmesiden...
       </div>
     </div>
   </div>
 
-  <div id="statusMsg" class="status"></div>
-
-  <div class="form-actions">
-    <button class="btn btn-secondary" onclick="clearForm()">Ryd formular</button>
-    <button class="btn btn-primary" id="publishBtn" onclick="publishPost()">
-      Publicer indlæg →
-    </button>
-  </div>
-
-</div>
+</div><!-- end #mainForm -->
 
 <script>
   // ---- CONFIG ----
   const CONFIG_KEY = 'kaare_admin_config';
   let imageData = null;
   let imageFilename = null;
+  let currentImageUrl = null;
+  let editMode = false;
+  let editFilename = null;
+  let editSha = null;
 
   // ---- INIT ----
   window.onload = function() {
@@ -594,7 +820,6 @@ Du kan formatere teksten sådan:
     } else {
       document.getElementById('setupScreen').style.display = 'block';
     }
-    // Set today's date
     const today = new Date().toISOString().split('T')[0];
     document.getElementById('postDate').value = today;
   };
@@ -603,6 +828,27 @@ Du kan formatere teksten sådan:
     try {
       return JSON.parse(localStorage.getItem(CONFIG_KEY));
     } catch { return null; }
+  }
+
+  // ---- TABS ----
+  function switchTab(tab) {
+    const newTab = document.getElementById('newTab');
+    const editTab = document.getElementById('editTab');
+    const btnNew = document.getElementById('tabBtnNew');
+    const btnEdit = document.getElementById('tabBtnEdit');
+
+    if (tab === 'new') {
+      newTab.style.display = 'block';
+      editTab.style.display = 'none';
+      btnNew.classList.add('active');
+      btnEdit.classList.remove('active');
+    } else {
+      newTab.style.display = 'none';
+      editTab.style.display = 'block';
+      btnNew.classList.remove('active');
+      btnEdit.classList.add('active');
+      loadPostList();
+    }
   }
 
   // ---- SETUP ----
@@ -618,9 +864,7 @@ Du kan formatere teksten sådan:
       return;
     }
 
-    // Test token
     errEl.style.display = 'none';
-    errEl.textContent = '';
 
     try {
       const res = await fetch(`https://api.github.com/repos/${owner}/${repo}`, {
@@ -649,6 +893,19 @@ Du kan formatere teksten sådan:
     }
   }
 
+  // ---- CATEGORIES ----
+  function getCategories() {
+    const boxes = document.querySelectorAll('#categoryGroup input[type="checkbox"]');
+    return Array.from(boxes).filter(b => b.checked).map(b => b.value);
+  }
+
+  function setCategories(cats) {
+    const boxes = document.querySelectorAll('#categoryGroup input[type="checkbox"]');
+    boxes.forEach(b => {
+      b.checked = cats.includes(b.value);
+    });
+  }
+
   // ---- IMAGE ----
   function handleImage(event) {
     const file = event.target.files[0];
@@ -662,10 +919,11 @@ Du kan formatere teksten sådan:
     imageFilename = file.name.replace(/[^a-z0-9.\-_]/gi, '-').toLowerCase();
     const reader = new FileReader();
     reader.onload = function(e) {
-      imageData = e.target.result.split(',')[1]; // base64
+      imageData = e.target.result.split(',')[1];
       document.getElementById('imagePreviewImg').src = e.target.result;
       document.getElementById('imagePreviewName').textContent = imageFilename;
       document.getElementById('imagePreview').style.display = 'block';
+      document.getElementById('imageAreaText').textContent = 'Skift billede';
     };
     reader.readAsDataURL(file);
   }
@@ -675,6 +933,12 @@ Du kan formatere teksten sådan:
     imageFilename = null;
     document.getElementById('imageFile').value = '';
     document.getElementById('imagePreview').style.display = 'none';
+    document.getElementById('imageAreaText').textContent = 'Klik for at vælge et billede';
+  }
+
+  function clearCurrentImage() {
+    currentImageUrl = null;
+    document.getElementById('currentImageWrap').classList.remove('visible');
   }
 
   // ---- SLUGIFY ----
@@ -687,27 +951,187 @@ Du kan formatere teksten sådan:
       .slice(0, 60);
   }
 
-  // ---- PUBLISH ----
+  // ---- FRONTMATTER PARSER ----
+  function parseFrontmatter(raw) {
+    const parts = raw.split(/^---\s*$/m);
+    if (parts.length < 3) return { fm: {}, body: raw };
+
+    const yamlBlock = parts[1];
+    const body = parts.slice(2).join('---').replace(/^\n/, '');
+    const fm = {};
+    const lines = yamlBlock.split('\n');
+    let listKey = null;
+
+    for (const line of lines) {
+      const listItem = line.match(/^\s+-\s+"?([^"]+)"?\s*$/);
+      const kvMatch = line.match(/^([\w\sÀ-ɏ]+?):\s*(.*)/);
+
+      if (listItem && listKey) {
+        if (!Array.isArray(fm[listKey])) fm[listKey] = [];
+        fm[listKey].push(listItem[1].trim());
+      } else if (kvMatch) {
+        const key = kvMatch[1].trim();
+        const val = kvMatch[2].trim().replace(/^["']|["']$/g, '');
+        if (val === '') {
+          fm[key] = [];
+          listKey = key;
+        } else {
+          fm[key] = val;
+          listKey = null;
+        }
+      }
+    }
+
+    return { fm, body };
+  }
+
+  // ---- LOAD POST LIST ----
+  async function loadPostList() {
+    const container = document.getElementById('postListContainer');
+    container.innerHTML = '<div class="post-list-loading"><div class="spinner"></div>Henter indlæg...</div>';
+
+    const config = getConfig();
+    if (!config) return;
+
+    try {
+      const res = await fetch(
+        `https://api.github.com/repos/${config.owner}/${config.repo}/contents/_posts`,
+        { headers: { 'Authorization': `token ${config.token}`, 'Accept': 'application/vnd.github.v3+json' } }
+      );
+
+      if (!res.ok) throw new Error('Kunne ikke hente liste over indlæg');
+
+      const files = await res.json();
+      const posts = files
+        .filter(f => f.name.endsWith('.md'))
+        .sort((a, b) => b.name.localeCompare(a.name));
+
+      if (posts.length === 0) {
+        container.innerHTML = '<p style="color:var(--muted); text-align:center; padding:2rem;">Ingen indlæg fundet.</p>';
+        return;
+      }
+
+      let html = '';
+      for (const post of posts) {
+        const datePart = post.name.match(/^(\d{4}-\d{2}-\d{2})/);
+        const date = datePart ? datePart[1] : '';
+        const slug = post.name.replace(/^\d{4}-\d{2}-\d{2}-/, '').replace(/\.md$/, '');
+        const displayTitle = slug.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+
+        html += `
+          <button class="post-list-btn" onclick="loadPostForEdit('${post.name}')">
+            <div>
+              <div class="post-list-title">${displayTitle}</div>
+              <div class="post-list-meta">${date}</div>
+            </div>
+            <span class="post-list-arrow">→</span>
+          </button>`;
+      }
+
+      container.innerHTML = html;
+
+    } catch (e) {
+      container.innerHTML = `<div class="status error" style="display:flex;">❌ ${e.message}</div>`;
+    }
+  }
+
+  // ---- LOAD POST FOR EDIT ----
+  async function loadPostForEdit(filename) {
+    const config = getConfig();
+    if (!config) return;
+
+    showStatus('loading', 'Henter indlæg...');
+    switchTab('new');
+
+    try {
+      const res = await fetch(
+        `https://api.github.com/repos/${config.owner}/${config.repo}/contents/_posts/${filename}`,
+        { headers: { 'Authorization': `token ${config.token}`, 'Accept': 'application/vnd.github.v3+json' } }
+      );
+
+      if (!res.ok) throw new Error('Kunne ikke hente indlægget');
+
+      const data = await res.json();
+      const raw = decodeURIComponent(escape(atob(data.content)));
+      const { fm, body } = parseFrontmatter(raw);
+
+      // Fill form
+      document.getElementById('postTitle').value = fm.title || '';
+      document.getElementById('postDate').value = fm.date || '';
+      document.getElementById('postContent').value = body;
+
+      const cats = Array.isArray(fm.categories) ? fm.categories : (fm.categories ? [fm.categories] : []);
+      setCategories(cats);
+
+      // Handle existing image
+      removeImage();
+      if (fm.image) {
+        currentImageUrl = fm.image;
+        const imgEl = document.getElementById('currentImagePreviewImg');
+        imgEl.src = fm.image.startsWith('http') ? fm.image : `https://kaareoester.dk${fm.image}`;
+        document.getElementById('currentImageWrap').classList.add('visible');
+        document.getElementById('imageAreaText').textContent = 'Erstat med nyt billede';
+      } else {
+        currentImageUrl = null;
+        document.getElementById('currentImageWrap').classList.remove('visible');
+        document.getElementById('imageAreaText').textContent = 'Klik for at tilføje et billede';
+      }
+
+      // Enter edit mode
+      editMode = true;
+      editFilename = filename;
+      editSha = data.sha;
+
+      document.getElementById('editBannerTitle').textContent = fm.title || filename;
+      document.getElementById('editBanner').classList.add('visible');
+      document.getElementById('formTitle').textContent = 'Rediger indlæg';
+      document.getElementById('formSub').textContent = 'Foretag dine ændringer og klik "Gem ændringer".';
+      document.getElementById('publishBtn').textContent = 'Gem ændringer →';
+
+      document.getElementById('statusMsg').style.display = 'none';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    } catch (e) {
+      showStatus('error', `❌ Fejl: ${e.message}`);
+    }
+  }
+
+  // ---- CANCEL EDIT ----
+  function cancelEdit() {
+    editMode = false;
+    editFilename = null;
+    editSha = null;
+    currentImageUrl = null;
+    document.getElementById('editBanner').classList.remove('visible');
+    document.getElementById('formTitle').textContent = 'Nyt indlæg';
+    document.getElementById('formSub').textContent = 'Udfyld felterne nedenfor og klik "Publicer" — indlægget er online inden for 2 minutter.';
+    document.getElementById('publishBtn').textContent = 'Publicer indlæg →';
+    document.getElementById('currentImageWrap').classList.remove('visible');
+    document.getElementById('imageAreaText').textContent = 'Klik for at vælge et billede';
+    clearForm();
+  }
+
+  // ---- PUBLISH / SAVE ----
   async function publishPost() {
     const title = document.getElementById('postTitle').value.trim();
     const date = document.getElementById('postDate').value;
-    const category = document.getElementById('postCategory').value;
+    const categories = getCategories();
     const content = document.getElementById('postContent').value.trim();
-    const statusEl = document.getElementById('statusMsg');
     const publishBtn = document.getElementById('publishBtn');
 
     if (!title) { showStatus('error', '⚠️ Udfyld venligst overskriften.'); return; }
     if (!content) { showStatus('error', '⚠️ Teksten må ikke være tom.'); return; }
+    if (categories.length === 0) { showStatus('error', '⚠️ Vælg mindst én kategori.'); return; }
 
     const config = getConfig();
     if (!config) { location.reload(); return; }
 
     publishBtn.disabled = true;
-    showStatus('loading', 'Publicerer dit indlæg...');
+    showStatus('loading', editMode ? 'Gemmer ændringer...' : 'Publicerer dit indlæg...');
 
     try {
-      // Upload image first if present
-      let imagePath = '';
+      // Upload new image if selected
+      let imagePath = currentImageUrl || '';
       if (imageData && imageFilename) {
         showStatus('loading', 'Uploader billede...');
         const imgRes = await githubPut(config,
@@ -716,30 +1140,41 @@ Du kan formatere teksten sådan:
           `Billede: ${imageFilename}`
         );
         if (!imgRes.ok) throw new Error('Kunne ikke uploade billede');
-        imagePath = `/kaareoester/assets/images/${date}-${imageFilename}`;
+        imagePath = `/assets/images/${date}-${imageFilename}`;
       }
 
-      // Build markdown
-      const slug = slugify(title);
-      const filename = `_posts/${date}-${slug}.md`;
-
-      let frontmatter = `---\nlayout: post\ntitle: "${title.replace(/"/g, "'")}"\ndate: ${date}\ncategories:\n  - "${category}"\n`;
+      // Build frontmatter
+      const catYaml = categories.map(c => `  - "${c}"`).join('\n');
+      let frontmatter = `---\nlayout: post\ntitle: "${title.replace(/"/g, "'")}"\ndate: ${date}\ncategories:\n${catYaml}\n`;
       if (imagePath) frontmatter += `image: "${imagePath}"\n`;
       frontmatter += `---\n\n`;
 
       const fileContent = frontmatter + content;
       const encoded = btoa(unescape(encodeURIComponent(fileContent)));
 
-      showStatus('loading', 'Gemmer indlæg på GitHub...');
-      const postRes = await githubPut(config, filename, encoded, `Nyt indlæg: ${title}`);
+      let filename, sha;
+      if (editMode) {
+        filename = `_posts/${editFilename}`;
+        sha = editSha;
+      } else {
+        filename = `_posts/${date}-${slugify(title)}.md`;
+        sha = undefined;
+      }
+
+      showStatus('loading', editMode ? 'Gemmer på GitHub...' : 'Gemmer indlæg på GitHub...');
+      const postRes = await githubPut(config, filename, encoded, `${editMode ? 'Opdateret' : 'Nyt'} indlæg: ${title}`, sha);
 
       if (!postRes.ok) {
         const err = await postRes.json();
         throw new Error(err.message || 'Ukendt fejl');
       }
 
-      showStatus('success', `✅ "${title}" er publiceret! Hjemmesiden opdateres automatisk inden for 1-2 minutter.`);
-      clearForm();
+      const msg = editMode
+        ? `✅ "${title}" er opdateret! Ændringerne er synlige inden for 1-2 minutter.`
+        : `✅ "${title}" er publiceret! Indlægget er online inden for 1-2 minutter.`;
+
+      cancelEdit();
+      showStatus('success', msg);
 
     } catch (e) {
       showStatus('error', `❌ Fejl: ${e.message}`);
@@ -748,19 +1183,20 @@ Du kan formatere teksten sådan:
     }
   }
 
-  async function githubPut(config, path, base64content, message) {
-    // Check if file exists (to get SHA for updates)
-    let sha = undefined;
-    try {
-      const check = await fetch(
-        `https://api.github.com/repos/${config.owner}/${config.repo}/contents/${path}`,
-        { headers: { 'Authorization': `token ${config.token}` } }
-      );
-      if (check.ok) {
-        const existing = await check.json();
-        sha = existing.sha;
-      }
-    } catch {}
+  async function githubPut(config, path, base64content, message, sha) {
+    if (sha === undefined) {
+      // Check for existing file to get SHA
+      try {
+        const check = await fetch(
+          `https://api.github.com/repos/${config.owner}/${config.repo}/contents/${path}`,
+          { headers: { 'Authorization': `token ${config.token}` } }
+        );
+        if (check.ok) {
+          const existing = await check.json();
+          sha = existing.sha;
+        }
+      } catch {}
+    }
 
     const body = { message, content: base64content };
     if (sha) body.sha = sha;
@@ -796,7 +1232,7 @@ Du kan formatere teksten sådan:
     document.getElementById('postContent').value = '';
     const today = new Date().toISOString().split('T')[0];
     document.getElementById('postDate').value = today;
-    document.getElementById('postCategory').value = 'Rejser';
+    setCategories([]);
     removeImage();
     document.getElementById('statusMsg').style.display = 'none';
   }

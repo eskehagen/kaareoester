@@ -1,190 +1,106 @@
-# 📝 Sådan tilføjer du et nyt indlæg — trin for trin
+# Sådan bruger du hjemmesidens admin-panel
 
-Denne guide er skrevet til dig, der ikke er vant til at arbejde med kode.
-Det eneste du skal bruge er en computer med internetadgang og en gratis GitHub-konto.
-
----
-
-## Hvad er GitHub?
-
-GitHub er et website, hvor din hjemmesides filer er gemt. Når du gemmer en ny fil dér,
-opdateres din hjemmeside automatisk inden for et par minutter.
-
-Du behøver **ikke** forstå kode. Du skriver bare din tekst i et simpelt format.
+Alt hvad du behøver for at tilføje og redigere indlæg på kaareoester.dk foregår via admin-panelet.
+Du behøver ikke forstå kode.
 
 ---
 
-## Trin 1 — Log ind på GitHub
+## Åbn admin-panelet
 
-1. Gå til **https://github.com** i din browser
-2. Log ind med din bruger og adgangskode
-3. Gå til dit hjemmeside-repository (f.eks. `github.com/kaareoester/kaareoester.github.io`)
+Gå til **kaareoester.dk/admin/** i din browser og log ind med dit GitHub-token.
 
----
-
-## Trin 2 — Gå til mappen `_posts`
-
-1. Klik på mappen **`_posts`** i listen over filer
-2. Her kan du se alle eksisterende indlæg som filer
+> Første gang skal du oprette et token — se vejledningen under "Første gangs opsætning" på siden.
 
 ---
 
-## Trin 3 — Opret en ny fil
+## Opret et nyt indlæg
 
-1. Klik på knappen **"Add file"** (øverst til højre)
-2. Vælg **"Create new file"**
+1. Klik på fanen **"✏️ Nyt indlæg"** (er valgt som standard)
+2. Udfyld felterne:
+   - **Overskrift** — titlen på dit indlæg
+   - **Dato** — sættes automatisk til i dag, men kan ændres
+   - **Kategori** — sæt hak ved én eller flere kategorier
+   - **Forsidebillede** — klik på billedfeltet for at vælge et billede fra din computer (valgfrit)
+   - **Tekst** — skriv dit indlæg her
+3. Klik på **"Publicer indlæg →"**
 
----
-
-## Trin 4 — Navngiv filen korrekt
-
-Filnavnet skal følge dette mønster:
-
-```
-ÅÅÅÅ-MM-DD-titel-paa-indlaeg.md
-```
-
-**Eksempler:**
-- `2026-04-15-rejse-til-marokko.md`
-- `2026-05-01-ny-bog-udgivet.md`
-- `2026-03-10-projekt-om-klimaet.md`
-
-> ⚠️ Vigtigt: Brug kun bogstaver, tal og bindestreger. Ingen æ, ø, å i filnavnet.
+Indlægget er synligt på hjemmesiden inden for **1-2 minutter**.
 
 ---
 
-## Trin 5 — Skriv indlæggets indhold
+## Rediger et eksisterende indlæg
 
-Kopier denne skabelon ind i tekstfeltet og udfyld den:
+Du kan rette i et indlæg eller tilføje et forsidebillede til et indlæg der ikke har et.
 
-```
----
-layout: post
-title: "Her skriver du overskriften på dit indlæg"
-date: 2026-04-15
-categories:
-  - "Rejser"
----
+1. Klik på fanen **"📂 Rediger indlæg"**
+2. Du ser en liste over alle indlæg — klik på det du vil redigere
+3. Formularen udfyldes automatisk med det eksisterende indhold
+4. Foretag dine ændringer — du kan fx:
+   - Tilføje eller skifte forsidebillede
+   - Rette teksten
+   - Tilføje eller fjerne kategorier
+5. Klik på **"Gem ændringer →"**
 
-Her begynder din tekst. Du kan bare skrive almindelig tekst.
-
-Du kan lave et nyt afsnit ved at hoppe en linje over.
-
-## En underoverskrift
-
-Du kan bruge ## til at lave underoverskrifter.
-
-**Fed tekst** laves med to stjerner på hver side.
-
-*Kursiv tekst* laves med en stjerne på hver side.
-
-- Punkt 1 i en liste
-- Punkt 2 i en liste
-- Punkt 3 i en liste
-```
+Ændringerne er synlige på hjemmesiden inden for **1-2 minutter**.
 
 ---
 
-## Kategorier du kan vælge
-
-Brug én eller flere af disse kategorier:
+## Kategorier
 
 | Kategori | Bruges til |
 |----------|-----------|
-| `Rejser` | Rejsebeskrivelser og oplevelser |
-| `Projekter` | Faglige projekter og samarbejder |
-| `Udgivelser` | Nye bøger og materialer |
-| `Bøger` | Specifikke bøger (brug sammen med Udgivelser) |
-| `Danmark` | Steder og rejser i Danmark |
-| `Verden` | Rejser udenfor Danmark |
-| `Arktis` | Alt om Arktis, Grønland, Svalbard |
+| Rejser | Rejsebeskrivelser og oplevelser |
+| Projekter | Faglige projekter og samarbejder |
+| Udgivelser | Nye bøger og materialer |
+| Bøger | Specifikke bøger (brug sammen med Udgivelser) |
+| Danmark | Steder og rejser i Danmark |
+| Verden | Rejser udenfor Danmark |
+| Arktis | Alt om Arktis, Grønland, Svalbard |
 
-Vil du bruge **flere kategorier**, skriver du dem sådan:
-
-```
-categories:
-  - "Rejser"
-  - "Verden"
-```
+Du kan vælge **flere kategorier** til samme indlæg — sæt blot hak ved dem alle.
 
 ---
 
-## Tilføj et billede til indlægget
+## Formatering af tekst
 
-**Metode 1 — Et billede fra internettet:**
+I tekstfeltet kan du bruge simple koder til at formatere:
 
-```
-![Billedtekst](https://www.eksempel.dk/sti/til/billede.jpg)
-```
-
-**Metode 2 — Upload dit eget billede:**
-
-1. Klik på **"Code"** (tilbage til forsiden af dit repository)
-2. Gå til mappen `assets` → `images`
-3. Klik **"Add file"** → **"Upload files"**
-4. Træk dit billede ind eller klik for at vælge det
-5. Klik **"Commit changes"**
-
-Derefter bruger du billedet i din tekst sådan:
-
-```
-![Billedbeskrivelse](/assets/images/mit-billede.jpg)
-```
-
-Du kan også tilføje et **forsidebillede** til indlægget (vises på forsiden og øverst i indlægget).
-Det gør du ved at tilføje en linje i toppen af filen (i den del der er mellem `---`):
-
-```
----
-layout: post
-title: "Min rejse"
-date: 2026-04-15
-categories:
-  - "Rejser"
-image: "/assets/images/mit-forsidebillede.jpg"
----
-```
+| Hvad du skriver | Hvad det giver |
+|-----------------|---------------|
+| `## Min overskrift` | En underoverskrift |
+| `**fed tekst**` | **Fed tekst** |
+| `*kursiv tekst*` | *Kursiv tekst* |
+| `- punkt` | Punkt i liste |
+| `[klikbar tekst](https://...)` | Et link |
+| `![billedbeskrivelse](https://...)` | Et billede fra internettet |
 
 ---
 
-## Trin 6 — Gem indlægget
+## Forsidebillede
 
-1. Rul ned til bunden af siden
-2. Du ser en boks med teksten **"Commit new file"**
-3. I det første felt kan du skrive en kort beskrivelse, f.eks. `Nyt indlæg om Marokko`
-   (eller bare lade det stå som det er)
-4. Klik på den grønne knap **"Commit new file"**
+Forsidebilledet vises på kortet på forsiden og øverst i selve indlægget.
 
-✅ **Færdig!** Din hjemmeside opdateres automatisk inden for 1-3 minutter.
+- **Nyt indlæg:** Klik på billedfeltet og vælg et billede fra din computer
+- **Eksisterende indlæg:** Gå til "Rediger indlæg", åbn indlægget, og vælg et nyt billede
+- Understøttede formater: JPG, PNG, WEBP — max 5 MB
 
 ---
 
-## Ret i et eksisterende indlæg
+## Noget virker ikke?
 
-1. Gå til mappen `_posts`
-2. Klik på filen du vil rette
-3. Klik på **blyantsikonet** (✏️) øverst til højre
-4. Foretag dine rettelser
-5. Klik **"Commit changes"** og derefter **"Commit changes"** igen
+- Tjek at du er logget ind med et gyldigt token (klik "Skift token" øverst til højre)
+- Tjek fanen "Actions" på GitHub for at se om byggeprocessen fejler
+- Kontakt Eske for hjælp
 
 ---
 
-## Slet et indlæg
+## Avanceret: Rediger direkte på GitHub
 
-1. Gå til mappen `_posts`
-2. Klik på filen du vil slette
-3. Klik på **skraldespandsikonet** (🗑️) øverst til højre
-4. Bekræft ved at klikke **"Commit changes"**
+Hvis du foretrækker det, kan du også redigere filer direkte på GitHub:
 
----
+1. Gå til github.com og log ind
+2. Åbn repository'et
+3. Gå til mappen `_posts/`
+4. Klik på en fil → klik på blyantsikonet (✏️) → rediger → "Commit changes"
 
-## Problemer?
-
-Hvis noget ikke virker, eller hjemmesiden ikke opdateres:
-
-1. Gå til fanen **"Actions"** i dit repository
-2. Her kan du se om der er fejl i byggeprocessen (der vises en rød kryds hvis noget gik galt)
-3. Tjek at dit filnavn følger mønsteret `ÅÅÅÅ-MM-DD-titel.md`
-4. Tjek at du har `---` linjer øverst og nederst i frontmatter-blokken
-
-Kontakt din søn/datter for hjælp — de kender opsætningen 😊
+Filnavne følger mønsteret: `ÅÅÅÅ-MM-DD-titel.md`
