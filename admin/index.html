@@ -813,7 +813,7 @@ permalink: /admin/
           <input type="file" id="imageFile" accept="image/*" onchange="handleImage(event)">
           <div class="image-area-icon">🖼️</div>
           <div class="image-area-text" id="imageAreaText">Klik for at vælge et billede</div>
-          <div class="image-area-sub">JPG, PNG eller WEBP · Max 5 MB</div>
+          <div class="image-area-sub">JPG, PNG eller WEBP · Max 20 MB</div>
         </div>
         <div class="image-preview" id="imagePreview">
           <img id="imagePreviewImg" src="" alt="">
@@ -1015,8 +1015,8 @@ Du kan formatere teksten sådan:
     const file = event.target.files[0];
     if (!file) return;
 
-    if (file.size > 5 * 1024 * 1024) {
-      alert('Billedet er for stort — max 5 MB.');
+    if (file.size > 20 * 1024 * 1024) {
+      alert('Billedet er for stort — max 20 MB.');
       return;
     }
 
@@ -1051,8 +1051,8 @@ Du kan formatere teksten sådan:
     if (!file) return;
     event.target.value = '';
 
-    if (file.size > 5 * 1024 * 1024) {
-      alert('Billedet er for stort — max 5 MB.');
+    if (file.size > 20 * 1024 * 1024) {
+      alert('Billedet er for stort — max 20 MB.');
       return;
     }
 
