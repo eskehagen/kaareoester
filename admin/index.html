@@ -1082,7 +1082,7 @@ Du kan formatere teksten sådan:
     if (!img) return;
     const date = document.getElementById('postDate').value;
     const path = `/assets/images/${date}-${img.filename}`;
-    const markdown = `\n![beskriv billedet](${path})\n`;
+    const markdown = `\n![](${path})\n`;
     const textarea = document.getElementById('postContent');
     const start = textarea.selectionStart;
     textarea.value = textarea.value.substring(0, start) + markdown + textarea.value.substring(textarea.selectionEnd);
