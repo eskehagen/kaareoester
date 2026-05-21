@@ -5,6 +5,7 @@ date: 2012-07-29
 categories:
   - "Rejser"
   - "Verden"
+image: "/assets/images/2012-07-29-dsc_8766.jpg"
 ---
 
 ## SOUTH TARAWA - DECEMBER 2011
