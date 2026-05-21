@@ -3,13 +3,10 @@ layout: post
 title: "111 steder på Samsø som du skal besøge"
 date: 2024-09-02
 categories:
+  - "Udgivelser"
   - "Bøger"
   - "Danmark"
-  - "Udgivelser"
-tags:
-  - "Danmark"
-  - "Samsø"
-image: "http://www.kaareoester.dk/wp-content/uploads/2024/09/111steder-198x300.jpg"
+image: "/assets/images/2024-09-02-111steder.jpg"
 ---
 
 En ny bog som omhandler Samsø og 111 unikke steder, som kan besøges på øen. 
