@@ -17,13 +17,15 @@ permalink: /udgivelser/
         {% if post.categories contains 'Bøger' %}
         <div class="post-card">
           {% if post.image %}
-            <img src="{{ post.image }}" alt="{{ post.title }}" class="post-card-image">
+            <div class="post-card-image-wrap">
+              <img src="{{ post.image }}" alt="{{ post.title }}" class="post-card-image">
+            </div>
           {% else %}
-            <div class="post-card-image-placeholder">📖</div>
+            <div class="post-card-placeholder ph-blue">📖</div>
           {% endif %}
           <div class="post-card-body">
             <div class="post-card-meta"><span class="cat-tag">Bog</span> · {{ post.date | date: "%Y" }}</div>
-            <h2><a href="{{ post.url }}">{{ post.title }}</a></h2>
+            <h2><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h2>
             {% if post.excerpt %}
               <p class="post-card-excerpt">{{ post.excerpt | strip_html | truncate: 100 }}</p>
             {% endif %}
@@ -40,7 +42,7 @@ permalink: /udgivelser/
         <li class="post-list-item">
           <span class="post-list-date">{{ post.date | date: "%-d. %b %Y" }}</span>
           <div class="post-list-content">
-            <h3><a href="{{ post.url }}">{{ post.title }}</a></h3>
+            <h3><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h3>
             {% if post.excerpt %}
               <p>{{ post.excerpt | strip_html | truncate: 140 }}</p>
             {% endif %}
