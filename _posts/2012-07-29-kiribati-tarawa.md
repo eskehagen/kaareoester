@@ -6,6 +6,17 @@ categories:
   - "Rejser"
   - "Verden"
 image: "/assets/images/2012-07-29-dsc_8766.jpg"
+gallery:
+  - "/assets/images/2012-07-29-dsc_0073.jpg"
+  - "/assets/images/2012-07-29-dsc_0580.jpg"
+  - "/assets/images/2012-07-29-dsc_0795.jpg"
+  - "/assets/images/2012-07-29-dsc_8233.jpg"
+  - "/assets/images/2012-07-29-dsc_8671.jpg"
+  - "/assets/images/2012-07-29-kiribati_fiskenet.jpg"
+  - "/assets/images/2012-07-29-fattigelande-endelafverden.jpg"
+  - "/assets/images/2012-07-29-fam.-mbw-iataa-eske-bariki.jpg"
+  - "/assets/images/2012-07-29-lataake-kiribati.jpg"
+  - "/assets/images/2012-07-29-kiribati_sunset.jpg"
 ---
 
 ## SOUTH TARAWA - DECEMBER 2011
@@ -53,8 +64,3 @@ http://www.youtube.com/watch?v=PKmeiigIYt8&amp;feature=channel&amp;list=UL
 
 
 ## Billeder fra Kiribati og øernes beboere
-
-
- 
-
-*[Billeder fra dette indlæg tilføjes snart]*
