@@ -30,6 +30,29 @@ layout: default
         {{ content }}
       </div>
 
+      {% if page.gallery and page.gallery.size > 0 %}
+        {% assign gallery_total = page.gallery.size %}
+        {% if gallery_total >= 4 %}
+          {% assign grid_count = 4 %}
+        {% else %}
+          {% assign grid_count = gallery_total %}
+        {% endif %}
+        <div class="post-gallery" role="button" tabindex="0" aria-label="Åbn fotogalleri med {{ gallery_total }} billeder">
+          <div class="gallery-grid gallery-grid-{{ grid_count }}">
+            {% for img in page.gallery limit: 4 %}
+              <div class="gallery-cell" data-index="{{ forloop.index0 }}">
+                <img src="{{ img }}" alt="" loading="lazy">
+                {% if forloop.index == 4 and gallery_total > 4 %}
+                  <div class="gallery-more-overlay">+{{ gallery_total | minus: 3 }}</div>
+                {% endif %}
+              </div>
+            {% endfor %}
+          </div>
+          <p class="gallery-label">📷 {{ gallery_total }} billeder &mdash; klik for at åbne galleri</p>
+        </div>
+        <script>window.__gallery = {{ page.gallery | jsonify }};</script>
+      {% endif %}
+
       {% if page.tags and page.tags.size > 0 %}
         <div class="tag-list">
           {% for tag in page.tags %}
@@ -43,7 +66,6 @@ layout: default
 
 <script>
 (function () {
-  // Append directly to body so position:fixed works correctly
   var overlay = document.createElement('div');
   overlay.className = 'lb-overlay';
 
@@ -51,6 +73,16 @@ layout: default
   closeBtn.className = 'lb-close';
   closeBtn.setAttribute('aria-label', 'Luk');
   closeBtn.textContent = '✕';
+
+  var prevBtn = document.createElement('button');
+  prevBtn.className = 'lb-prev';
+  prevBtn.setAttribute('aria-label', 'Forrige billede');
+  prevBtn.textContent = '‹';
+
+  var nextBtn = document.createElement('button');
+  nextBtn.className = 'lb-next';
+  nextBtn.setAttribute('aria-label', 'Næste billede');
+  nextBtn.textContent = '›';
 
   var wrap = document.createElement('div');
   wrap.className = 'lb-img-wrap';
@@ -62,23 +94,54 @@ layout: default
   var caption = document.createElement('div');
   caption.className = 'lb-caption';
 
+  var counter = document.createElement('div');
+  counter.className = 'lb-counter';
+
   var hint = document.createElement('div');
   hint.className = 'lb-hint';
-  hint.textContent = 'Tryk Esc eller klik for at lukke';
+  hint.textContent = 'Esc for at lukke · ← → for at bladre';
 
   wrap.appendChild(img);
   wrap.appendChild(caption);
   overlay.appendChild(closeBtn);
+  overlay.appendChild(prevBtn);
+  overlay.appendChild(nextBtn);
+  overlay.appendChild(counter);
   overlay.appendChild(wrap);
   overlay.appendChild(hint);
   document.body.appendChild(overlay);
 
-  function open(src, alt) {
-    img.src = src;
-    caption.textContent = alt || '';
+  var lbImages = [];
+  var lbIndex = 0;
+
+  function open(images, index) {
+    lbImages = images;
+    lbIndex = (index || 0);
+    show();
     overlay.classList.add('lb-open');
     document.body.style.overflow = 'hidden';
     closeBtn.focus();
+  }
+
+  function show() {
+    var cur = lbImages[lbIndex];
+    img.src = cur.src;
+    caption.textContent = cur.alt || '';
+    var multi = lbImages.length > 1;
+    prevBtn.style.display = multi ? 'flex' : 'none';
+    nextBtn.style.display = multi ? 'flex' : 'none';
+    counter.style.display = multi ? 'block' : 'none';
+    if (multi) counter.textContent = (lbIndex + 1) + ' / ' + lbImages.length;
+  }
+
+  function prev() {
+    lbIndex = (lbIndex - 1 + lbImages.length) % lbImages.length;
+    show();
+  }
+
+  function next() {
+    lbIndex = (lbIndex + 1) % lbImages.length;
+    show();
   }
 
   function close() {
@@ -87,19 +150,54 @@ layout: default
     setTimeout(function () { img.src = ''; }, 300);
   }
 
+  // Single image clicks (featured image + body images)
   document.querySelectorAll('.post-featured-image, .post-content img').forEach(function (el) {
-    el.addEventListener('click', function () { open(el.src, el.alt); });
+    el.style.cursor = 'zoom-in';
+    el.addEventListener('click', function () {
+      open([{ src: el.src, alt: el.alt }], 0);
+    });
   });
 
+  // Gallery clicks
+  var galleryEl = document.querySelector('.post-gallery');
+  if (galleryEl && window.__gallery) {
+    var galleryImages = window.__gallery.map(function (src) { return { src: src, alt: '' }; });
+    galleryEl.addEventListener('click', function (e) {
+      var cell = e.target.closest('.gallery-cell');
+      var startIndex = cell ? parseInt(cell.dataset.index, 10) : 0;
+      open(galleryImages, startIndex);
+    });
+    galleryEl.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' || e.key === ' ') { open(galleryImages, 0); e.preventDefault(); }
+    });
+  }
+
+  prevBtn.addEventListener('click', function (e) { e.stopPropagation(); prev(); });
+  nextBtn.addEventListener('click', function (e) { e.stopPropagation(); next(); });
   overlay.addEventListener('click', close);
   wrap.addEventListener('click', function (e) { e.stopPropagation(); });
   closeBtn.addEventListener('click', function (e) { e.stopPropagation(); close(); });
-  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
 
-  var touchY = 0;
-  overlay.addEventListener('touchstart', function (e) { touchY = e.touches[0].clientY; }, { passive: true });
+  document.addEventListener('keydown', function (e) {
+    if (!overlay.classList.contains('lb-open')) return;
+    if (e.key === 'Escape') close();
+    if (e.key === 'ArrowLeft') prev();
+    if (e.key === 'ArrowRight') next();
+  });
+
+  // Swipe support
+  var touchStartX = 0, touchStartY = 0;
+  overlay.addEventListener('touchstart', function (e) {
+    touchStartX = e.touches[0].clientX;
+    touchStartY = e.touches[0].clientY;
+  }, { passive: true });
   overlay.addEventListener('touchend', function (e) {
-    if (e.changedTouches[0].clientY - touchY > 60) close();
+    var dx = e.changedTouches[0].clientX - touchStartX;
+    var dy = e.changedTouches[0].clientY - touchStartY;
+    if (Math.abs(dy) > 60 && Math.abs(dy) > Math.abs(dx)) { close(); return; }
+    if (Math.abs(dx) > 50 && lbImages.length > 1) {
+      if (dx < 0) next(); else prev();
+    }
   }, { passive: true });
 })();
 </script>
