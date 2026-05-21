@@ -40,3 +40,58 @@ layout: default
     </article>
   </div>
 </div>
+
+<!-- LIGHTBOX -->
+<div class="lb-overlay" id="lb" role="dialog" aria-modal="true" aria-label="Billedvisning">
+  <button class="lb-close" id="lb-close" aria-label="Luk">✕</button>
+  <div class="lb-img-wrap" id="lb-wrap">
+    <img class="lb-img" id="lb-img" src="" alt="">
+    <div class="lb-caption" id="lb-caption"></div>
+  </div>
+  <div class="lb-hint">Tryk Esc eller klik for at lukke</div>
+</div>
+
+<script>
+(function () {
+  const overlay  = document.getElementById('lb');
+  const img      = document.getElementById('lb-img');
+  const caption  = document.getElementById('lb-caption');
+  const closeBtn = document.getElementById('lb-close');
+  const wrap     = document.getElementById('lb-wrap');
+
+  function open(src, alt) {
+    img.src = src;
+    caption.textContent = alt || '';
+    overlay.classList.add('lb-open');
+    document.body.style.overflow = 'hidden';
+    closeBtn.focus();
+  }
+
+  function close() {
+    overlay.classList.remove('lb-open');
+    document.body.style.overflow = '';
+    setTimeout(function () { img.src = ''; }, 300);
+  }
+
+  // Wire up all post images
+  var imgs = document.querySelectorAll('.post-featured-image, .post-content img');
+  imgs.forEach(function (el) {
+    el.addEventListener('click', function () { open(el.src, el.alt); });
+  });
+
+  // Close triggers
+  overlay.addEventListener('click', close);
+  wrap.addEventListener('click', function (e) { e.stopPropagation(); });
+  closeBtn.addEventListener('click', function (e) { e.stopPropagation(); close(); });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') close();
+  });
+
+  // Touch: swipe down to close
+  var touchY = 0;
+  overlay.addEventListener('touchstart', function (e) { touchY = e.touches[0].clientY; }, { passive: true });
+  overlay.addEventListener('touchend', function (e) {
+    if (e.changedTouches[0].clientY - touchY > 60) close();
+  }, { passive: true });
+})();
+</script>
