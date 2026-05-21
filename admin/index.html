@@ -501,6 +501,97 @@ permalink: /admin/
 
     .btn-reset:hover { color: var(--error); }
 
+    /* --- Extra images (body images) --- */
+    .extra-images-area {
+      border: 1.5px solid var(--border);
+      border-radius: 6px;
+      padding: 1rem;
+      background: var(--white);
+    }
+
+    .extra-images-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .extra-image-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 0.5rem 0.75rem;
+    }
+
+    .extra-image-thumb {
+      width: 56px;
+      height: 56px;
+      object-fit: cover;
+      border-radius: 4px;
+      border: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .extra-image-name {
+      flex: 1;
+      font-size: 0.82rem;
+      color: var(--muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      min-width: 0;
+    }
+
+    .btn-insert-image {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 600;
+      background: var(--accent-light);
+      color: var(--accent);
+      border: 1px solid var(--accent);
+      border-radius: 4px;
+      padding: 0.3rem 0.7rem;
+      cursor: pointer;
+      white-space: nowrap;
+      flex-shrink: 0;
+      transition: all 0.12s;
+    }
+
+    .btn-insert-image:hover { background: var(--accent); color: white; }
+
+    .btn-remove-extra {
+      font-size: 0.78rem;
+      color: var(--muted);
+      background: none;
+      border: none;
+      cursor: pointer;
+      flex-shrink: 0;
+      padding: 0 0.25rem;
+    }
+
+    .btn-remove-extra:hover { color: var(--error); }
+
+    .btn-add-image {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.88rem;
+      font-weight: 500;
+      color: var(--accent);
+      background: var(--accent-light);
+      border: 1.5px dashed var(--accent);
+      border-radius: 6px;
+      padding: 0.5rem 1rem;
+      cursor: pointer;
+      transition: all 0.15s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .btn-add-image:hover { background: var(--accent); color: white; border-style: solid; }
+
     /* --- Markdown cheatsheet --- */
     .cheatsheet {
       background: var(--white);
@@ -732,6 +823,18 @@ permalink: /admin/
       </div>
 
       <div class="field form-full">
+        <label>Billeder i teksten</label>
+        <div class="extra-images-area">
+          <div id="extraImagesList" class="extra-images-list"></div>
+          <button type="button" class="btn-add-image" onclick="document.getElementById('extraImageFile').click()">
+            ➕ Tilføj billede
+          </button>
+          <input type="file" id="extraImageFile" accept="image/*" style="display:none" onchange="handleExtraImage(event)">
+        </div>
+        <div class="textarea-hint">Upload et billede og klik "Indsæt i tekst" for at indsætte det der, hvor markøren er i tekstfeltet.</div>
+      </div>
+
+      <div class="field form-full">
         <label>Tekst *</label>
         <textarea id="postContent" placeholder="Skriv dit indlæg her...
 
@@ -811,6 +914,7 @@ Du kan formatere teksten sådan:
   let editMode = false;
   let editFilename = null;
   let editSha = null;
+  let extraImages = [];
 
   // ---- INIT ----
   window.onload = function() {
@@ -939,6 +1043,61 @@ Du kan formatere teksten sådan:
   function clearCurrentImage() {
     currentImageUrl = null;
     document.getElementById('currentImageWrap').classList.remove('visible');
+  }
+
+  // ---- EXTRA IMAGES (body) ----
+  function handleExtraImage(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    event.target.value = '';
+
+    if (file.size > 5 * 1024 * 1024) {
+      alert('Billedet er for stort — max 5 MB.');
+      return;
+    }
+
+    const filename = file.name.replace(/[^a-z0-9.\-_]/gi, '-').toLowerCase();
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      extraImages.push({ data: e.target.result.split(',')[1], filename, previewUrl: e.target.result });
+      renderExtraImages();
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function renderExtraImages() {
+    const list = document.getElementById('extraImagesList');
+    list.innerHTML = extraImages.map((img, i) => `
+      <div class="extra-image-item">
+        <img class="extra-image-thumb" src="${img.previewUrl}" alt="">
+        <span class="extra-image-name">${img.filename}</span>
+        <button class="btn-insert-image" onclick="insertImageAtCursor(${i})">Indsæt i tekst</button>
+        <button class="btn-remove-extra" title="Fjern" onclick="removeExtraImage(${i})">✕</button>
+      </div>
+    `).join('');
+  }
+
+  function insertImageAtCursor(index) {
+    const img = extraImages[index];
+    if (!img) return;
+    const date = document.getElementById('postDate').value;
+    const path = `/assets/images/${date}-${img.filename}`;
+    const markdown = `\n![beskriv billedet](${path})\n`;
+    const textarea = document.getElementById('postContent');
+    const start = textarea.selectionStart;
+    textarea.value = textarea.value.substring(0, start) + markdown + textarea.value.substring(textarea.selectionEnd);
+    textarea.selectionStart = textarea.selectionEnd = start + markdown.length;
+    textarea.focus();
+  }
+
+  function removeExtraImage(index) {
+    extraImages.splice(index, 1);
+    renderExtraImages();
+  }
+
+  function clearExtraImages() {
+    extraImages = [];
+    renderExtraImages();
   }
 
   // ---- SLUGIFY ----
@@ -1077,6 +1236,9 @@ Du kan formatere teksten sådan:
         document.getElementById('imageAreaText').textContent = 'Klik for at tilføje et billede';
       }
 
+      // Reset extra images for this edit session
+      clearExtraImages();
+
       // Enter edit mode
       editMode = true;
       editFilename = filename;
@@ -1130,10 +1292,10 @@ Du kan formatere teksten sådan:
     showStatus('loading', editMode ? 'Gemmer ændringer...' : 'Publicerer dit indlæg...');
 
     try {
-      // Upload new image if selected
+      // Upload featured image if selected
       let imagePath = currentImageUrl || '';
       if (imageData && imageFilename) {
-        showStatus('loading', 'Uploader billede...');
+        showStatus('loading', 'Uploader forsidebillede...');
         const imgRes = await githubPut(config,
           `assets/images/${date}-${imageFilename}`,
           imageData,
@@ -1141,6 +1303,17 @@ Du kan formatere teksten sådan:
         );
         if (!imgRes.ok) throw new Error('Kunne ikke uploade billede');
         imagePath = `/assets/images/${date}-${imageFilename}`;
+      }
+
+      // Upload extra body images
+      for (const img of extraImages) {
+        showStatus('loading', `Uploader billede: ${img.filename}...`);
+        const res = await githubPut(config,
+          `assets/images/${date}-${img.filename}`,
+          img.data,
+          `Billede: ${img.filename}`
+        );
+        if (!res.ok) throw new Error(`Kunne ikke uploade ${img.filename}`);
       }
 
       // Build frontmatter
@@ -1234,6 +1407,7 @@ Du kan formatere teksten sådan:
     document.getElementById('postDate').value = today;
     setCategories([]);
     removeImage();
+    clearExtraImages();
     document.getElementById('statusMsg').style.display = 'none';
   }
 </script>
