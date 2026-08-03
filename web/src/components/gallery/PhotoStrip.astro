@@ -1,0 +1,104 @@
+---
+import SmartImage from '~/components/SmartImage.astro';
+import { processFullsize } from '~/lib/images';
+import type { PhotoRef } from '~/lib/cms/types';
+
+interface Props {
+  photos: PhotoRef[];
+  id: string;
+  title?: string;
+}
+
+const { photos, id, title } = Astro.props;
+
+const fullsize = await Promise.all(
+  photos.map(async (photo) => {
+    const processed = await processFullsize(photo);
+    return {
+      src: processed.src,
+      alt: photo.alt,
+      caption: photo.caption,
+      location: photo.location,
+      credit: photo.credit,
+      takenAt: photo.takenAt,
+      href: photo.entryHref,
+      contextTitle: photo.entryTitle,
+      width: processed.width,
+      height: processed.height,
+    };
+  }),
+);
+
+const payload = JSON.stringify({ title, photos: fullsize });
+---
+
+<!--
+  Vandret billedstrøm. Ruller frit med musen/fingeren og fungerer som
+  genvej ind i fuldskærmsgalleriet.
+-->
+<div class="relative">
+  <div
+    data-gallery={id}
+    data-photo-strip
+    class="flex snap-x snap-mandatory gap-3 overflow-x-auto px-6 pb-6 pt-1 [scrollbar-width:none] md:gap-4 md:px-10 [&::-webkit-scrollbar]:hidden"
+  >
+    {
+      photos.map((photo, index) => (
+        <button
+          type="button"
+          data-gallery-item={index}
+          aria-label={`Åbn billede: ${photo.entryTitle}`}
+          class="group relative aspect-[3/4] w-[62vw] shrink-0 snap-start overflow-hidden rounded-2xl bg-sand-100 shadow-soft transition-shadow duration-500 hover:shadow-lift sm:w-[38vw] md:aspect-[4/5] md:w-[26vw] lg:w-[21vw] cursor-zoom-in"
+        >
+          <SmartImage
+            image={photo}
+            widths={[320, 560, 800]}
+            sizes="(max-width: 640px) 62vw, (max-width: 1024px) 38vw, 22vw"
+            class="img-zoom h-full w-full object-cover"
+          />
+
+          <span class="pointer-events-none absolute inset-0 bg-gradient-to-t from-ink-900/70 via-ink-900/10 to-transparent opacity-70 transition-opacity duration-500 group-hover:opacity-95" />
+
+          <span class="pointer-events-none absolute inset-x-0 bottom-0 p-4 text-left">
+            <span class="block text-[0.68rem] uppercase tracking-[0.14em] text-white/65">
+              {photo.location ?? photo.entryTitle}
+            </span>
+            <span class="mt-1 block translate-y-1 font-[--font-display] text-[1.05rem] leading-tight text-white opacity-0 transition-all duration-500 group-hover:translate-y-0 group-hover:opacity-100">
+              Se i fuld skærm
+            </span>
+          </span>
+        </button>
+      ))
+    }
+  </div>
+
+  <script is:inline type="application/json" data-gallery-data={id} set:html={payload} />
+</div>
+
+<script>
+  /** Musehjul ruller strimlen vandret — mere naturligt på desktop. */
+  const setup = () => {
+    document.querySelectorAll<HTMLElement>('[data-photo-strip]').forEach((strip) => {
+      if (strip.dataset.wheelBound) return;
+      strip.dataset.wheelBound = 'true';
+
+      strip.addEventListener(
+        'wheel',
+        (event) => {
+          if (Math.abs(event.deltaY) <= Math.abs(event.deltaX)) return;
+          const atStart = strip.scrollLeft <= 0 && event.deltaY < 0;
+          const atEnd =
+            strip.scrollLeft >= strip.scrollWidth - strip.clientWidth - 1 && event.deltaY > 0;
+          if (atStart || atEnd) return;
+
+          event.preventDefault();
+          strip.scrollLeft += event.deltaY;
+        },
+        { passive: false },
+      );
+    });
+  };
+
+  setup();
+  document.addEventListener('astro:page-load', setup);
+</script>

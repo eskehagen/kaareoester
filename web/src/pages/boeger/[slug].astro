@@ -1,0 +1,16 @@
+---
+import EntryLayout from '~/layouts/Entry.astro';
+import { cms } from '~/lib/cms';
+
+export async function getStaticPaths() {
+  const { cms } = await import('~/lib/cms');
+  const entries = await cms.getEntries({ kind: 'bog' });
+  return entries.map((entry) => ({ params: { slug: entry.slug } }));
+}
+
+const { slug } = Astro.params;
+const entry = await cms.getEntry('bog', slug!);
+if (!entry) return Astro.redirect('/404');
+---
+
+<EntryLayout entry={entry} />

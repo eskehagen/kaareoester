@@ -1,0 +1,276 @@
+---
+import Base from '~/layouts/Base.astro';
+import SmartImage from '~/components/SmartImage.astro';
+import PhotoGallery from '~/components/gallery/PhotoGallery.astro';
+import EntryCard from '~/components/EntryCard.astro';
+import { cms } from '~/lib/cms';
+import { formatDate, isoDate } from '~/lib/format';
+import { KIND_LABEL, KIND_SEGMENT } from '~/lib/cms/types';
+import type { Entry } from '~/lib/cms/types';
+
+interface Props {
+  entry: Entry;
+}
+
+const { entry } = Astro.props;
+const body = await cms.renderBody(entry);
+
+const related = await cms.getEntries({ kind: entry.kind, exclude: entry.slug, limit: 3 });
+const kindLabel = KIND_LABEL[entry.kind];
+const backHref = `/${KIND_SEGMENT[entry.kind]}`;
+
+/** Faktapanelet vises kun, hvis der faktisk er fakta at vise. */
+const facts = [
+  entry.book?.publisher && { label: 'Forlag', value: entry.book.publisher },
+  entry.book?.year && { label: 'Udgivelsesår', value: String(entry.book.year) },
+  entry.book?.format && { label: 'Format', value: entry.book.format },
+  entry.book?.audience && { label: 'Målgruppe', value: entry.book.audience },
+  entry.book?.isbn && { label: 'ISBN', value: entry.book.isbn },
+  entry.book?.coAuthors?.length && { label: 'Medforfattere', value: entry.book.coAuthors.join(', ') },
+  entry.project?.client && { label: 'Rekvirent', value: entry.project.client },
+  entry.project?.role && { label: 'Rolle', value: entry.project.role },
+  entry.project?.period && { label: 'Periode', value: entry.project.period },
+  entry.place?.country && { label: 'Land', value: entry.place.country },
+  entry.place?.region && { label: 'Region', value: entry.place.region },
+].filter(Boolean) as { label: string; value: string }[];
+
+const externalUrl = entry.book?.purchaseUrl ?? entry.project?.url;
+const galleryId = `entry-${entry.slug}`;
+---
+
+<Base
+  title={entry.title}
+  description={entry.summary}
+  image={entry.cover?.src}
+  type="article"
+  publishedAt={entry.date}
+>
+  <!-- Læsefremdrift -->
+  <div
+    data-progress
+    class="fixed inset-x-0 top-0 z-[60] h-[2px] origin-left scale-x-0 bg-clay-500"
+    aria-hidden="true"
+  >
+  </div>
+
+  <article>
+    <!-- ============================ TOPPEN ============================ -->
+    <header class="relative overflow-hidden pt-[var(--header-height)]">
+      <div
+        class="pointer-events-none absolute -left-32 top-10 h-[26rem] w-[26rem] rounded-[var(--radius-blob)] bg-clay-400/10 blur-3xl"
+        aria-hidden="true"
+      >
+      </div>
+
+      <div class="shell pb-10 pt-14 md:pb-14 md:pt-20">
+        <a
+          href={backHref}
+          class="group inline-flex items-center gap-2 text-[0.85rem] text-ink-400 transition-colors hover:text-clay-600"
+        >
+          <span class="transition-transform duration-300 group-hover:-translate-x-1">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M19 12H6M11 6l-6 6 6 6" />
+            </svg>
+          </span>
+          {kindLabel.plural}
+        </a>
+
+        <h1 class="mt-6 max-w-4xl text-display" data-reveal>{entry.title}</h1>
+
+        {entry.subtitle && (
+          <p class="mt-4 max-w-2xl font-[--font-display] text-xl text-ink-500" data-reveal>
+            {entry.subtitle}
+          </p>
+        )}
+
+        <div
+          class="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3 text-[0.82rem] text-ink-400"
+          data-reveal
+          style="--reveal-delay:80ms"
+        >
+          <time datetime={isoDate(entry.date)}>{formatDate(entry.date)}</time>
+          {entry.readingTime && <span>{entry.readingTime} min. læsning</span>}
+          {entry.gallery.length > 0 && <span>{entry.gallery.length} billeder</span>}
+
+          {
+            entry.tags.length > 0 && (
+              <ul class="flex flex-wrap gap-2">
+                {entry.tags.map((tag) => (
+                  <li class="rounded-full bg-sand-100 px-3 py-1 text-[0.75rem] text-ink-500">
+                    {tag}
+                  </li>
+                ))}
+              </ul>
+            )
+          }
+        </div>
+      </div>
+
+      {
+        entry.cover && (
+          <div class="shell" data-reveal="scale">
+            <div class="relative overflow-hidden rounded-[1.75rem] shadow-frame md:rounded-[2.5rem]">
+              <div class="aspect-[16/10] w-full md:aspect-[16/8]">
+                <SmartImage
+                  image={entry.cover}
+                  widths={[600, 1000, 1500, 2000]}
+                  sizes="(max-width: 1400px) 100vw, 1320px"
+                  loading="eager"
+                  fetchpriority="high"
+                  class="h-full w-full object-cover"
+                />
+              </div>
+            </div>
+          </div>
+        )
+      }
+    </header>
+
+    <!-- =========================== BRØDTEKST ========================== -->
+    <div class="shell grid gap-14 py-16 md:py-20 lg:grid-cols-[minmax(0,1fr)_18rem] lg:gap-16">
+      <div class="prose-organic max-w-[68ch]">
+        {entry.summary && (
+          <p class="!mt-0 font-[--font-display] text-[1.22rem] leading-[1.6] text-ink-800">
+            {entry.summary}
+          </p>
+        )}
+
+        {body.type === 'astro' ? <body.Content /> : <Fragment set:html={body.html} />}
+      </div>
+
+      <!-- Sidepanel -->
+      <aside class="lg:sticky lg:top-28 lg:self-start">
+        {
+          facts.length > 0 && (
+            <div class="rounded-2xl border border-sand-200 bg-sand-50 p-6">
+              <h2 class="eyebrow">Fakta</h2>
+              <dl class="mt-5 space-y-4">
+                {facts.map((fact) => (
+                  <div>
+                    <dt class="text-[0.72rem] uppercase tracking-[0.12em] text-ink-400">
+                      {fact.label}
+                    </dt>
+                    <dd class="mt-1 text-[0.92rem] text-ink-800">{fact.value}</dd>
+                  </div>
+                ))}
+              </dl>
+
+              {externalUrl && (
+                <a
+                  href={externalUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-full bg-ink-900 px-5 py-3 text-[0.88rem] text-paper transition-colors hover:bg-clay-600"
+                >
+                  Læs mere
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+                    <path d="M7 17 17 7M8 7h9v9" />
+                  </svg>
+                </a>
+              )}
+            </div>
+          )
+        }
+
+        {
+          body.headings.filter((heading) => heading.depth === 2).length > 2 && (
+            <nav class="mt-8 hidden lg:block" aria-label="Indhold på siden">
+              <h2 class="eyebrow">Indhold</h2>
+              <ul class="mt-4 space-y-2.5 border-l border-sand-200 pl-4">
+                {body.headings
+                  .filter((heading) => heading.depth === 2)
+                  .map((heading) => (
+                    <li>
+                      <a
+                        href={`#${heading.slug}`}
+                        class="block text-[0.85rem] leading-snug text-ink-400 transition-colors hover:text-clay-600"
+                      >
+                        {heading.text}
+                      </a>
+                    </li>
+                  ))}
+              </ul>
+            </nav>
+          )
+        }
+      </aside>
+    </div>
+
+    <!-- ============================ GALLERI =========================== -->
+    {
+      entry.gallery.length > 0 && (
+        <section class="border-y border-sand-200 bg-sand-50 py-16 md:py-20" aria-labelledby="galleri-titel">
+          <div class="shell">
+            <div class="mb-9 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between" data-reveal>
+              <div>
+                <p class="eyebrow">Billeder</p>
+                <h2 id="galleri-titel" class="mt-3 text-title">
+                  {entry.gallery.length} billeder fra {entry.title}
+                </h2>
+              </div>
+
+              <button
+                type="button"
+                data-open-gallery={galleryId}
+                class="group inline-flex shrink-0 items-center gap-2.5 rounded-full border border-sand-300 px-6 py-3 text-[0.9rem] text-ink-700 transition-all duration-400 hover:border-ink-900 hover:bg-ink-900 hover:text-paper"
+              >
+                Åbn i fuld skærm
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round">
+                  <path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" />
+                </svg>
+              </button>
+            </div>
+
+            <div data-reveal>
+              <PhotoGallery photos={entry.gallery} id={galleryId} title={entry.title} />
+            </div>
+          </div>
+        </section>
+      )
+    }
+
+    <!-- ============================ RELATERET ========================= -->
+    {
+      related.length > 0 && (
+        <section class="shell py-16 md:py-24" aria-labelledby="relateret-titel">
+          <h2 id="relateret-titel" class="text-title" data-reveal>
+            Mere fra {kindLabel.plural.toLowerCase()}
+          </h2>
+          <div class="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+            {related.map((item, index) => (
+              <EntryCard entry={item} data-reveal style={`--reveal-delay:${index * 80}ms`} />
+            ))}
+          </div>
+        </section>
+      )
+    }
+  </article>
+</Base>
+
+<script>
+  /** Fremdriftslinjen øverst + knappen der åbner galleriet på første billede. */
+  const setup = () => {
+    const bar = document.querySelector<HTMLElement>('[data-progress]');
+    if (bar) {
+      const update = () => {
+        const max = document.documentElement.scrollHeight - window.innerHeight;
+        bar.style.transform = `scaleX(${max > 0 ? Math.min(1, window.scrollY / max) : 0})`;
+      };
+      update();
+      window.addEventListener('scroll', update, { passive: true });
+      window.addEventListener('resize', update);
+    }
+
+    document.querySelectorAll<HTMLElement>('[data-open-gallery]').forEach((button) => {
+      button.addEventListener('click', () => {
+        const id = button.dataset.openGallery;
+        document
+          .querySelector<HTMLElement>(`[data-gallery="${id}"] [data-gallery-item="0"]`)
+          ?.click();
+      });
+    });
+  };
+
+  setup();
+  document.addEventListener('astro:page-load', setup);
+</script>

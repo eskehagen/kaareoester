@@ -1,0 +1,176 @@
+---
+import '~/styles/global.css';
+import Header from '~/components/Header.astro';
+import Footer from '~/components/Footer.astro';
+import LightboxHost from '~/components/gallery/LightboxHost.astro';
+import { cms } from '~/lib/cms';
+import { processSocial } from '~/lib/images';
+
+interface Props {
+  title?: string;
+  description?: string;
+  /** Absolut eller site-relativ URL til delebillede. */
+  image?: string;
+  /** Slår standard-sidehovedets gennemsigtighed til (bruges på forsiden). */
+  transparentHeader?: boolean;
+  type?: 'website' | 'article';
+  publishedAt?: Date;
+  noindex?: boolean;
+}
+
+const settings = await cms.getSettings();
+
+const {
+  title,
+  description = settings.description,
+  image,
+  transparentHeader = false,
+  type = 'website',
+  publishedAt,
+  noindex = false,
+} = Astro.props;
+
+const pageTitle = title ? `${title} — ${settings.title}` : `${settings.title} — ${settings.tagline}`;
+const canonical = new URL(Astro.url.pathname.replace(/\/$/, '') || '/', Astro.site);
+
+/** Delebillede: sidens eget, ellers forsidens hero. */
+const ogSource = image ?? settings.hero.image?.src;
+const ogProcessed = ogSource ? await processSocial({ src: ogSource, alt: '' }) : null;
+const ogImage = new URL(ogProcessed?.src ?? '/favicon.svg', Astro.site);
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': type === 'article' ? 'Article' : 'WebSite',
+  name: settings.title,
+  headline: title ?? settings.title,
+  description,
+  url: canonical.href,
+  inLanguage: 'da-DK',
+  author: {
+    '@type': 'Person',
+    name: settings.title,
+    email: settings.email,
+    jobTitle: 'Fagforfatter',
+  },
+  ...(publishedAt ? { datePublished: publishedAt.toISOString() } : {}),
+};
+---
+
+<!doctype html>
+<html lang="da">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+
+    <meta property="og:type" content={type} />
+    <meta property="og:title" content={title ?? settings.title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:locale" content="da_DK" />
+    <meta property="og:site_name" content={settings.title} />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <meta name="theme-color" content="#fdfbf7" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="alternate" type="application/rss+xml" title={settings.title} href="/rss.xml" />
+
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+
+    {/* Sættes før første maling, så scroll-reveal ikke giver et glimt af uanimeret indhold. */}
+    <script is:inline>
+      document.documentElement.classList.add('js');
+    </script>
+
+    {
+      /**
+       * Kun i udvikling: Vites React Fast Refresh-preamble indsættes
+       * normalt af Astro på sider med React-øer. Galleriet hentes først
+       * ved klik (uden ø), så preamblen sættes her i stedet. Den er ikke
+       * med i produktionsbygget.
+       */
+      import.meta.env.DEV && (
+        <script
+          type="module"
+          is:inline
+          set:html={`
+            import RefreshRuntime from '/@react-refresh';
+            RefreshRuntime.injectIntoGlobalHook(window);
+            window.$RefreshReg$ = () => {};
+            window.$RefreshSig$ = () => (type) => type;
+            window.__vite_plugin_react_preamble_installed__ = true;
+          `}
+        />
+      )
+    }
+  </head>
+
+  <body class="min-h-screen">
+    <a
+      href="#indhold"
+      class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[200] focus:rounded-full focus:bg-ink-900 focus:px-5 focus:py-2.5 focus:text-sm focus:text-paper"
+    >
+      Gå til indhold
+    </a>
+
+    <div class="relative z-10 flex min-h-screen flex-col">
+      <Header transparent={transparentHeader} />
+      <main id="indhold" class="flex-1">
+        <slot />
+      </main>
+      <Footer settings={settings} />
+    </div>
+
+    <LightboxHost />
+
+    <script>
+      /**
+       * Scroll-reveal. Elementer med [data-reveal] toner ind, når de
+       * kommer i syne. Ét fælles observer-objekt frem for ét pr. element.
+       */
+      const reveal = () => {
+        const targets = document.querySelectorAll('[data-reveal]:not(.is-visible)');
+        if (!targets.length) return;
+
+        if (!('IntersectionObserver' in window)) {
+          targets.forEach((element) => element.classList.add('is-visible'));
+          return;
+        }
+
+        const observer = new IntersectionObserver(
+          (entries) => {
+            for (const entry of entries) {
+              if (!entry.isIntersecting) continue;
+              entry.target.classList.add('is-visible');
+              observer.unobserve(entry.target);
+            }
+          },
+          { rootMargin: '0px 0px -8% 0px', threshold: 0.08 },
+        );
+
+        targets.forEach((element) => observer.observe(element));
+
+        /**
+         * Sikkerhedsnet: indhold må aldrig blive hængende usynligt, hvis
+         * observeren ikke når at udløse (skjult fane, aggressiv throttling
+         * eller en browser der opfører sig anderledes end forventet).
+         */
+        window.setTimeout(() => {
+          document
+            .querySelectorAll('[data-reveal]:not(.is-visible)')
+            .forEach((element) => {
+              const { top } = element.getBoundingClientRect();
+              if (top < window.innerHeight * 1.2) element.classList.add('is-visible');
+            });
+        }, 1600);
+      };
+
+      reveal();
+      document.addEventListener('astro:page-load', reveal);
+    </script>
+  </body>
+</html>

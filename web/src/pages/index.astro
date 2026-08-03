@@ -1,0 +1,206 @@
+---
+import Base from '~/layouts/Base.astro';
+import Hero from '~/components/Hero.astro';
+import SectionHeading from '~/components/SectionHeading.astro';
+import EntryCard from '~/components/EntryCard.astro';
+import PhotoStrip from '~/components/gallery/PhotoStrip.astro';
+import SmartImage from '~/components/SmartImage.astro';
+import { cms } from '~/lib/cms';
+import { curate } from '~/lib/curate';
+
+const settings = await cms.getSettings();
+const bio = await cms.getBiography();
+
+const [alleRejser, alleProjekter, alleBoeger, alleFotos, alle] = await Promise.all([
+  cms.getEntries({ kind: 'rejse' }),
+  cms.getEntries({ kind: 'projekt' }),
+  cms.getEntries({ kind: 'bog' }),
+  cms.getPhotos(),
+  cms.getEntries(),
+]);
+
+const rejser = curate(alleRejser, 3);
+const projekter = curate(alleProjekter, 3);
+const boeger = curate(alleBoeger, 3);
+
+const [hovedrejse, ...flereRejser] = rejser;
+
+/** Et bredt udvalg til billedstrømmen — ét billede pr. indlæg først. */
+const stroem = (() => {
+  const seen = new Set<string>();
+  const primary = alleFotos.filter((photo) => {
+    if (seen.has(photo.entryHref)) return false;
+    seen.add(photo.entryHref);
+    return true;
+  });
+  const rest = alleFotos.filter((photo) => !primary.includes(photo));
+  return [...primary, ...rest].slice(0, 14);
+})();
+
+const aarstal = alle.map((entry) => entry.date.getFullYear());
+const stats = [
+  { value: `${alle.length}`, label: 'Indlæg' },
+  { value: `${alleFotos.length}`, label: 'Billeder' },
+  {
+    value: `${Math.max(1, new Date().getFullYear() - Math.min(...aarstal))} år`,
+    label: 'Dokumenteret',
+  },
+];
+---
+
+<Base transparentHeader>
+  <Hero
+    eyebrow={settings.hero.eyebrow}
+    heading={settings.hero.heading}
+    intro={settings.hero.intro}
+    image={settings.hero.image}
+    stats={stats}
+  />
+
+  <!-- ============================ REJSER ============================ -->
+  <section class="shell py-20 md:py-28" aria-labelledby="rejser-overskrift">
+    <SectionHeading
+      eyebrow="Fra rejserne"
+      title="Steder der satte sig fast"
+      description="Billeder og fortællinger fra atoller, isbjørne, megabyer og danske kyster — samlet gennem tre årtiers rejser."
+      href="/rejser"
+      linkLabel="Alle rejser"
+      class="mb-12"
+    />
+
+    <div class="grid gap-8 lg:grid-cols-[1.35fr_1fr] lg:gap-10">
+      {hovedrejse && <EntryCard entry={hovedrejse} variant="wide" loading="eager" data-reveal />}
+
+      <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-1 lg:gap-7">
+        {
+          flereRejser.slice(0, 2).map((entry, index) => (
+            <EntryCard entry={entry} data-reveal style={`--reveal-delay:${100 + index * 90}ms`} />
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================== BILLEDSTRØMMEN ======================== -->
+  <section
+    class="relative overflow-hidden border-y border-sand-200 bg-sand-50 py-20 md:py-24"
+    aria-labelledby="billeder-overskrift"
+  >
+    <div class="shell mb-10">
+      <SectionHeading
+        eyebrow="Billedarkivet"
+        title="Klik på et billede"
+        description="Galleriet åbner i fuld skærm. Naviger med piletaster, swipe eller filmstrimlen — og del et enkelt billede direkte med et link."
+        href="/galleri"
+        linkLabel="Hele arkivet"
+      />
+    </div>
+
+    <div data-reveal>
+      <PhotoStrip photos={stroem} id="forside-stroem" title="Udvalgte billeder" />
+    </div>
+  </section>
+
+  <!-- ============================ BØGER ============================= -->
+  <section class="shell py-20 md:py-28" aria-labelledby="boeger-overskrift">
+    <SectionHeading
+      eyebrow="Udgivelser"
+      title="Bøger og læremidler"
+      description="Grundbøger, fagbøger og digitale læremidler til grundskolen — om geografi, klima, handel og bæredygtighed."
+      href="/boeger"
+      linkLabel="Alle udgivelser"
+      class="mb-12"
+    />
+
+    <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 lg:gap-10">
+      {
+        boeger.map((entry, index) => (
+          <EntryCard entry={entry} data-reveal style={`--reveal-delay:${index * 90}ms`} />
+        ))
+      }
+    </div>
+  </section>
+
+  <!-- =========================== PROJEKTER ========================== -->
+  <section class="relative overflow-hidden py-20 md:py-28" aria-labelledby="projekter-overskrift">
+    <div
+      class="pointer-events-none absolute -left-40 top-1/4 h-96 w-96 rounded-[var(--radius-blob)] bg-moss-400/10 blur-3xl"
+      aria-hidden="true"
+    >
+    </div>
+
+    <div class="shell">
+      <SectionHeading
+        eyebrow="Projekter"
+        title="Formidling i praksis"
+        description="Kurser, kampagner og samarbejder med bl.a. Miljøstyrelsen, VIA University College og Gyldendal."
+        href="/projekter"
+        linkLabel="Alle projekter"
+        class="mb-12"
+      />
+
+      <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 lg:gap-10">
+        {
+          projekter.map((entry, index) => (
+            <EntryCard entry={entry} data-reveal style={`--reveal-delay:${index * 90}ms`} />
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================== OM =============================== -->
+  <section class="shell pb-24 pt-4 md:pb-32" aria-labelledby="om-overskrift">
+    <div
+      class="relative overflow-hidden rounded-[2rem] bg-ink-900 px-7 py-14 text-paper md:rounded-[2.75rem] md:px-16 md:py-20"
+      data-reveal="scale"
+    >
+      <div
+        class="pointer-events-none absolute -right-24 -top-24 h-80 w-80 rounded-[var(--radius-blob)] bg-clay-500/25 blur-3xl"
+        aria-hidden="true"
+      >
+      </div>
+
+      <div class="relative grid items-center gap-12 md:grid-cols-[auto_1fr] md:gap-16">
+        {
+          bio.portrait && (
+            <div class="w-40 shrink-0 overflow-hidden rounded-[var(--radius-blob)] md:w-56">
+              <SmartImage
+                image={bio.portrait}
+                widths={[240, 480]}
+                sizes="14rem"
+                class="aspect-square h-full w-full object-cover"
+              />
+            </div>
+          )
+        }
+
+        <div>
+          <p class="text-[0.72rem] font-semibold uppercase tracking-[0.18em] text-clay-400">
+            {bio.role}
+          </p>
+          <h2 id="om-overskrift" class="mt-4 text-display text-paper">
+            {bio.quote?.text ?? bio.name}
+          </h2>
+          <p class="mt-6 max-w-2xl text-[1.02rem] leading-relaxed text-paper/70">
+            {bio.intro[0]}
+          </p>
+          <div class="mt-9 flex flex-wrap gap-3">
+            <a
+              href="/biografi"
+              class="rounded-full bg-paper px-7 py-3.5 text-[0.92rem] text-ink-900 transition-all duration-400 hover:bg-clay-400 hover:text-white"
+            >
+              Læs biografi & CV
+            </a>
+            <a
+              href="/kontakt"
+              class="rounded-full border border-paper/25 px-7 py-3.5 text-[0.92rem] text-paper/85 transition-all duration-400 hover:border-paper hover:text-paper"
+            >
+              Skriv til Kaare
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</Base>

@@ -1,0 +1,168 @@
+---
+import Base from '~/layouts/Base.astro';
+import EntryCard from '~/components/EntryCard.astro';
+import type { Entry, EntryKind } from '~/lib/cms/types';
+
+interface Props {
+  kind: EntryKind;
+  eyebrow: string;
+  title: string;
+  description: string;
+  entries: Entry[];
+  metaDescription?: string;
+}
+
+const { eyebrow, title, description, entries, metaDescription } = Astro.props;
+
+/** Tags udledes af indholdet, så filtrene altid følger CMS'et. */
+const tagCounts = new Map<string, number>();
+for (const entry of entries) {
+  for (const tag of entry.tags) tagCounts.set(tag, (tagCounts.get(tag) ?? 0) + 1);
+}
+const tags = [...tagCounts.entries()]
+  .filter(([, count]) => count > 1)
+  .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], 'da'))
+  .map(([tag]) => tag);
+
+const years = [...new Set(entries.map((entry) => entry.date.getFullYear()))].sort((a, b) => b - a);
+---
+
+<Base title={title} description={metaDescription ?? description}>
+  <!-- Sidehoved -->
+  <section class="relative overflow-hidden pt-[var(--header-height)]">
+    <div
+      class="pointer-events-none absolute -right-40 -top-20 h-[30rem] w-[30rem] rounded-[var(--radius-blob)] bg-clay-400/10 blur-3xl"
+      aria-hidden="true"
+    >
+    </div>
+
+    <div class="shell py-16 md:py-24">
+      <p class="eyebrow" data-reveal>{eyebrow}</p>
+      <h1 class="mt-4 max-w-3xl text-hero" data-reveal style="--reveal-delay:60ms">{title}</h1>
+      <p
+        class="mt-7 max-w-2xl text-[1.06rem] leading-[1.75] text-ink-500"
+        data-reveal
+        style="--reveal-delay:140ms"
+      >
+        {description}
+      </p>
+
+      <div class="mt-10 flex flex-wrap items-baseline gap-x-8 gap-y-2 text-[0.8rem] text-ink-400" data-reveal style="--reveal-delay:200ms">
+        <span><span class="text-ink-800">{entries.length}</span> indlæg</span>
+        {
+          years.length > 1 && (
+            <span>
+              <span class="text-ink-800">
+                {years[years.length - 1]}–{years[0]}
+              </span>
+            </span>
+          )
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Filtre -->
+  {
+    tags.length > 1 && (
+      <div class="sticky top-[var(--header-height)] z-30 border-y border-sand-200 bg-paper/88 backdrop-blur-xl">
+        <div class="shell flex gap-2 overflow-x-auto py-3.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <button
+            type="button"
+            data-filter="alle"
+            aria-pressed="true"
+            class="filter-chip shrink-0 rounded-full border border-ink-900 bg-ink-900 px-4 py-1.5 text-[0.82rem] text-paper transition-all duration-300"
+          >
+            Alle
+          </button>
+          {tags.map((tag) => (
+            <button
+              type="button"
+              data-filter={tag}
+              aria-pressed="false"
+              class="filter-chip shrink-0 rounded-full border border-sand-300 px-4 py-1.5 text-[0.82rem] text-ink-500 transition-all duration-300 hover:border-ink-900 hover:text-ink-900"
+            >
+              {tag}
+            </button>
+          ))}
+        </div>
+      </div>
+    )
+  }
+
+  <!-- Indhold -->
+  <section class="shell py-14 md:py-20">
+    <div
+      data-entry-grid
+      class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 lg:gap-x-8 lg:gap-y-14"
+    >
+      {
+        entries.map((entry, index) => (
+          <EntryCard
+            entry={entry}
+            data-entry
+            data-tags={entry.tags.join('|')}
+            data-reveal
+            style={`--reveal-delay:${(index % 3) * 80}ms`}
+            loading={index < 3 ? 'eager' : 'lazy'}
+          />
+        ))
+      }
+    </div>
+
+    <p data-empty hidden class="py-20 text-center text-ink-400">
+      Ingen indlæg med dette emne endnu.
+    </p>
+  </section>
+</Base>
+
+<script>
+  /**
+   * Filtrering uden sideskift. Kort der falder fra, animeres ud og
+   * fjernes fra layoutet — resten flyder blødt på plads.
+   */
+  const setup = () => {
+    const chips = document.querySelectorAll<HTMLButtonElement>('.filter-chip');
+    const cards = document.querySelectorAll<HTMLElement>('[data-entry]');
+    const empty = document.querySelector<HTMLElement>('[data-empty]');
+    if (!chips.length) return;
+
+    const activeClasses = ['border-ink-900', 'bg-ink-900', 'text-paper'];
+    const idleClasses = ['border-sand-300', 'text-ink-500'];
+
+    const apply = (filter: string) => {
+      let visible = 0;
+
+      cards.forEach((card) => {
+        const tags = (card.dataset.tags ?? '').split('|').filter(Boolean);
+        const show = filter === 'alle' || tags.includes(filter);
+
+        card.style.transition = 'opacity 0.35s ease, transform 0.35s ease';
+        card.style.opacity = show ? '1' : '0';
+        card.style.transform = show ? 'none' : 'scale(0.97)';
+        card.hidden = !show;
+        if (show) visible += 1;
+      });
+
+      if (empty) empty.hidden = visible > 0;
+    };
+
+    chips.forEach((chip) => {
+      chip.addEventListener('click', () => {
+        chips.forEach((other) => {
+          const isActive = other === chip;
+          other.setAttribute('aria-pressed', String(isActive));
+          other.classList.toggle('hover:border-ink-900', !isActive);
+          other.classList.toggle('hover:text-ink-900', !isActive);
+          activeClasses.forEach((cls) => other.classList.toggle(cls, isActive));
+          idleClasses.forEach((cls) => other.classList.toggle(cls, !isActive));
+        });
+
+        apply(chip.dataset.filter ?? 'alle');
+      });
+    });
+  };
+
+  setup();
+  document.addEventListener('astro:page-load', setup);
+</script>

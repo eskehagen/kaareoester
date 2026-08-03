@@ -1,0 +1,141 @@
+[
+  {
+    "id": "biografi",
+    "name": "Kaare Øster",
+    "role": "Fagforfatter · Redaktør · Konsulent",
+    "portrait": {
+      "src": "/billeder/kaare-Oester.jpg",
+      "alt": "Portræt af Kaare Øster"
+    },
+    "intro": [
+      "Igennem min karriere har jeg beskæftiget mig med læremiddelproduktion, undervisning, projektkoordinering og forfatterskab i en bred vifte af naturfaglige temaer med fokus på geografi og faglitteratur.",
+      "Rejser rundt på kloden har dannet grundlag for mine målsætninger og visioner om at formidle stof, der er med til at skabe nysgerrighed og fordybelse hos læseren — hvad enten det er skolebørn, undervisere eller voksne læsere.",
+      "Jeg har produceret undervisningsmateriale for bl.a. Gyldendal Uddannelse, Miljøstyrelsen, Fødevarestyrelsen og VIA University College, og har samarbejdet med en lang række uddannelsesinstitutioner og forlag."
+    ],
+    "quote": {
+      "text": "Geografi er ikke navne på et kort. Det er forbindelsen mellem det sted, du står, og det sted, du læser om.",
+      "source": "Kaare Øster"
+    },
+    "facts": [
+      {
+        "label": "Base",
+        "value": "Danmark · opvokset på Samsø"
+      },
+      {
+        "label": "Felt",
+        "value": "Geografi, natur, miljø og klima"
+      },
+      {
+        "label": "Målgrupper",
+        "value": "Grundskole, ungdomsuddannelser, voksne"
+      },
+      {
+        "label": "Kontakt",
+        "value": "kaos@kaareoester.dk"
+      }
+    ],
+    "experience": [
+      {
+        "period": "Løbende",
+        "title": "Free lance fagforfatter og redaktør",
+        "organisation": "Egen virksomhed",
+        "description": "Forfatter og redaktør på læremidler, fagbøger og formidlingsprojekter inden for geografi, natur, miljø og bæredygtighed."
+      },
+      {
+        "period": "2024",
+        "title": "111 steder på Samsø som du skal besøge",
+        "organisation": "Med Jens Øster-Mortensen",
+        "description": "Rejsebog om Samsøs natur, historie og kultur — fra nordspids til sydspids og øens 22 landsbyer."
+      },
+      {
+        "period": "2019–2020",
+        "title": "Invasive arter i Danmark og globalt",
+        "organisation": "Miljøstyrelsen",
+        "description": "Undervisningsmateriale om invasive arter, lovgivning og biodiversitet."
+      },
+      {
+        "period": "2018",
+        "title": "Verdens Naturfag — Geografi",
+        "organisation": "Gyldendal Uddannelse",
+        "description": "Forfatter på Gyldendals geografisystem til grundskolen, del af fagsystemet Verdens Naturfag."
+      },
+      {
+        "period": "2018",
+        "title": "Bedre dyrevelfærd",
+        "organisation": "Fødevarestyrelsen",
+        "description": "Gratis undervisningsmateriale til 4.–6. og 7.–9. klassetrin."
+      },
+      {
+        "period": "2013–2015",
+        "title": "Etisk handel, global handel og verdensmålene",
+        "organisation": "Læremiddelprojekter",
+        "description": "Materialer om forbrug, globale værdikæder og FN's verdensmål til udskoling og ungdomsuddannelser."
+      },
+      {
+        "period": "2009–2010",
+        "title": "Faglig læsning i naturfagene",
+        "organisation": "VIA University College / CFU · Dansk Forfatterforening",
+        "description": "Kursusrække og rapport om faglig læsning, gennemført med midler fra Læselystkampagnen. Kurser bl.a. på Hald Hovedgaard."
+      },
+      {
+        "period": "2010",
+        "title": "Lande omkring Nordpolen",
+        "organisation": "Forlaget Meloni · serien Verdens Brændpunkter",
+        "description": "Fagbog om natur, miljø og mennesker i Arktis."
+      }
+    ],
+    "education": [],
+    "skills": [
+      "Fagforfatterskab",
+      "Læremiddelproduktion",
+      "Redaktion",
+      "Projektledelse",
+      "Foredrag og kurser",
+      "Geografi og naturfag",
+      "Klima og bæredygtighed",
+      "Rejsefotografi"
+    ],
+    "partners": [
+      "Gyldendal Uddannelse",
+      "Miljøstyrelsen",
+      "Fødevarestyrelsen",
+      "Dansk Fjernvarmeforening",
+      "VIA University College / CFU",
+      "Naturstyrelsen",
+      "Dansk Forfatterforening",
+      "Forlaget Meloni"
+    ],
+    "selectedWorks": [
+      {
+        "period": "2024",
+        "title": "111 steder på Samsø som du skal besøge",
+        "organisation": "Rejsebog"
+      },
+      {
+        "period": "2018",
+        "title": "Gyldendals Verdens Naturfag — Geografi",
+        "organisation": "Bogsystem til grundskolen"
+      },
+      {
+        "period": "2014",
+        "title": "Global handel",
+        "organisation": "Læremiddel"
+      },
+      {
+        "period": "2011",
+        "title": "Samsø — en grøn ø",
+        "organisation": "Bog & Net"
+      },
+      {
+        "period": "2011",
+        "title": "Udsigt til U-lande",
+        "organisation": "Serie i tre titler, 3.–10. klasse"
+      },
+      {
+        "period": "2010",
+        "title": "Lande omkring Nordpolen",
+        "organisation": "Verdens Brændpunkter"
+      }
+    ]
+  }
+]

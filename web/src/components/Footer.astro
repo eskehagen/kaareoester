@@ -1,0 +1,89 @@
+---
+import Logo from '~/components/Logo.astro';
+import type { SiteSettings } from '~/lib/cms/types';
+
+interface Props {
+  settings: SiteSettings;
+}
+
+const { settings } = Astro.props;
+const year = new Date().getFullYear();
+
+const columns = [
+  {
+    title: 'Indhold',
+    links: [
+      { href: '/rejser', label: 'Rejser' },
+      { href: '/projekter', label: 'Projekter' },
+      { href: '/boeger', label: 'Bøger' },
+      { href: '/galleri', label: 'Billedarkiv' },
+    ],
+  },
+  {
+    title: 'Om',
+    links: [
+      { href: '/biografi', label: 'Biografi & CV' },
+      { href: '/kontakt', label: 'Kontakt' },
+      { href: '/rss.xml', label: 'RSS-feed' },
+    ],
+  },
+];
+---
+
+<footer class="relative mt-32 overflow-hidden border-t border-sand-200 bg-sand-50">
+  <!-- Organisk formelement der bryder den lige kant -->
+  <div
+    class="pointer-events-none absolute -right-24 -top-32 h-72 w-72 rounded-[var(--radius-blob)] bg-clay-400/10 blur-2xl"
+    aria-hidden="true"
+  >
+  </div>
+
+  <div class="shell relative py-16 md:py-20">
+    <div class="grid gap-12 md:grid-cols-[1.6fr_1fr_1fr]">
+      <div>
+        <div class="flex items-center gap-3">
+          <Logo class="h-10 w-10" />
+          <span class="font-[--font-display] text-xl text-ink-900">{settings.title}</span>
+        </div>
+        <p class="mt-5 max-w-sm text-[0.95rem] leading-relaxed text-ink-500">
+          {settings.description}
+        </p>
+        <a
+          href={`mailto:${settings.email}`}
+          class="link-underline mt-6 inline-block text-[0.95rem] text-clay-600"
+        >
+          {settings.email}
+        </a>
+      </div>
+
+      {
+        columns.map((column) => (
+          <nav aria-label={column.title}>
+            <h2 class="eyebrow">{column.title}</h2>
+            <ul class="mt-5 space-y-3">
+              {column.links.map((link) => (
+                <li>
+                  <a
+                    href={link.href}
+                    class="link-underline text-[0.95rem] text-ink-500 transition-colors hover:text-ink-900"
+                  >
+                    {link.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        ))
+      }
+    </div>
+
+    <div class="rule-soft mt-14"></div>
+
+    <div
+      class="mt-6 flex flex-col gap-3 text-[0.8rem] text-ink-400 sm:flex-row sm:items-center sm:justify-between"
+    >
+      <p>© {year} {settings.title}. Alle billeder tilhører fotografen.</p>
+      <p>{settings.tagline}</p>
+    </div>
+  </div>
+</footer>

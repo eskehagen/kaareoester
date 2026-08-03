@@ -1,0 +1,30 @@
+---
+interface Props {
+  class?: string;
+}
+const { class: className = '' } = Astro.props;
+---
+
+<!--
+  Mærket: en klode set fra siden — horisontlinje, en meridian og solen
+  over kanten. Tegnet som streger, så det virker på alle størrelser.
+-->
+<svg
+  viewBox="0 0 48 48"
+  fill="none"
+  class={className}
+  role="img"
+  aria-label="Kaare Øster"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <circle cx="24" cy="24" r="19" stroke="var(--color-ink-900)" stroke-width="1.6" />
+  <path
+    d="M6.4 19.5h35.2M6.4 28.5h35.2"
+    stroke="var(--color-ink-900)"
+    stroke-width="1.2"
+    stroke-opacity="0.45"
+    stroke-linecap="round"
+  />
+  <ellipse cx="24" cy="24" rx="8.6" ry="19" stroke="var(--color-ink-900)" stroke-width="1.2" stroke-opacity="0.45" />
+  <circle cx="34.5" cy="13.5" r="4.6" fill="var(--color-clay-500)" />
+</svg>

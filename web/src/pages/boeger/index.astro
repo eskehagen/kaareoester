@@ -1,0 +1,15 @@
+---
+import Category from '~/layouts/Category.astro';
+import { cms } from '~/lib/cms';
+
+const entries = await cms.getEntries({ kind: 'bog' });
+---
+
+<Category
+  kind="bog"
+  eyebrow="Udgivelser"
+  title="Bøger og læremidler"
+  description="Grundbøger, fagbøger og digitale materialer til grundskolen og ungdomsuddannelserne. Om geografi, klima, global handel, biodiversitet og bæredygtighed — og om at læse fagligt."
+  metaDescription="Bøger og undervisningsmaterialer af Kaare Øster — geografi, klima, global handel og faglig læsning."
+  entries={entries}
+/>

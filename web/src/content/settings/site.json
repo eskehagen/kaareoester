@@ -1,0 +1,18 @@
+[
+  {
+    "id": "site",
+    "title": "Kaare Øster",
+    "tagline": "Fagforfatter · Rejser · Projekter · Udgivelser",
+    "description": "Fagforfatter og underviser med geografi, natur og bæredygtighed som omdrejningspunkt. Rejsebilleder og fortællinger fra hele kloden, undervisningsbøger og projekter.",
+    "email": "kaos@kaareoester.dk",
+    "hero": {
+      "eyebrow": "Fagforfatter · Underviser · Fotograf",
+      "heading": "Verden set gennem geografiens sprog",
+      "intro": "I mere end tre årtier har jeg rejst, fotograferet og skrevet om mennesker, natur og klima — fra Kiribatis synkende atoller til isbjørnenes Svalbard. Her er billederne, bøgerne og projekterne samlet ét sted.",
+      "image": {
+        "src": "/billeder/2017-06-11-isbjorn-low.jpg",
+        "alt": "Isbjørn på isen ved Svalbard"
+      }
+    }
+  }
+]

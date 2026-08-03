@@ -1,0 +1,15 @@
+---
+import Category from '~/layouts/Category.astro';
+import { cms } from '~/lib/cms';
+
+const entries = await cms.getEntries({ kind: 'projekt' });
+---
+
+<Category
+  kind="projekt"
+  eyebrow="Projekter"
+  title="Formidling der skal virke"
+  description="Kurser, kampagner, VR-forløb og udviklingsprojekter — typisk i samarbejde med styrelser, forlag og professionshøjskoler. Fælles for dem er ambitionen om at gøre svært stof brugbart i et klasselokale."
+  metaDescription="Projekter, kurser og udviklingsarbejde af Kaare Øster for bl.a. Miljøstyrelsen, VIA University College og Gyldendal."
+  entries={entries}
+/>

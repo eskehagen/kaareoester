@@ -1,0 +1,207 @@
+---
+import Base from '~/layouts/Base.astro';
+import SmartImage from '~/components/SmartImage.astro';
+import { cms } from '~/lib/cms';
+import { processFullsize, resolveLocal } from '~/lib/images';
+import { KIND_LABEL, type EntryKind } from '~/lib/cms/types';
+import { formatYear } from '~/lib/format';
+
+const photos = await cms.getPhotos();
+
+/** Fuldskærmsversionerne genereres ved build og lægges i galleriets datablok. */
+const fullsize = await Promise.all(
+  photos.map(async (photo) => {
+    const processed = await processFullsize(photo);
+    return {
+      src: processed.src,
+      alt: photo.alt,
+      caption: photo.caption,
+      location: photo.location,
+      credit: photo.credit,
+      takenAt: photo.takenAt ?? formatYear(photo.entryDate),
+      href: photo.entryHref,
+      contextTitle: photo.entryTitle,
+      width: processed.width,
+      height: processed.height,
+    };
+  }),
+);
+
+const payload = JSON.stringify({ title: 'Billedarkivet', photos: fullsize });
+
+const kinds: EntryKind[] = ['rejse', 'projekt', 'bog'];
+const counts = Object.fromEntries(
+  kinds.map((kind) => [kind, photos.filter((photo) => photo.entryKind === kind).length]),
+) as Record<EntryKind, number>;
+
+const filters = [
+  { value: 'alle', label: 'Alle billeder', count: photos.length },
+  ...kinds
+    .filter((kind) => counts[kind] > 0)
+    .map((kind) => ({ value: kind, label: KIND_LABEL[kind].plural, count: counts[kind] })),
+];
+
+/** Masonry uden JavaScript: naturlige højder i CSS-kolonner. */
+const ratioOf = (src: string) => {
+  const local = resolveLocal(src);
+  return local ? local.width / local.height : 1.5;
+};
+---
+
+<Base
+  title="Billedarkiv"
+  description="Alle billeder fra Kaare Østers rejser og projekter samlet ét sted — åbn dem i fuld skærm."
+>
+  <section class="relative overflow-hidden pt-[var(--header-height)]">
+    <div
+      class="pointer-events-none absolute -left-40 top-0 h-[30rem] w-[30rem] rounded-[var(--radius-blob)] bg-ocean-400/12 blur-3xl"
+      aria-hidden="true"
+    >
+    </div>
+
+    <div class="shell py-16 md:py-24">
+      <p class="eyebrow" data-reveal>Billedarkivet</p>
+      <h1 class="mt-4 max-w-3xl text-hero" data-reveal style="--reveal-delay:60ms">
+        Hvert billede er et sted
+      </h1>
+      <p
+        class="mt-7 max-w-2xl text-[1.06rem] leading-[1.75] text-ink-500"
+        data-reveal
+        style="--reveal-delay:140ms"
+      >
+        Klik på et billede for at åbne det i fuld skærm. Naviger med piletasterne eller ved at
+        swipe, træk nedad for at lukke — og del et enkelt billede direkte via adresselinjen.
+      </p>
+
+      <div
+        class="mt-10 flex flex-wrap gap-2"
+        data-reveal
+        style="--reveal-delay:200ms"
+        role="group"
+        aria-label="Filtrér billeder"
+      >
+        {
+          filters.map((filter, index) => (
+            <button
+              type="button"
+              data-photo-filter={filter.value}
+              aria-pressed={index === 0}
+              class:list={[
+                'photo-chip rounded-full border px-5 py-2 text-[0.85rem] transition-all duration-300',
+                index === 0
+                  ? 'border-ink-900 bg-ink-900 text-paper'
+                  : 'border-sand-300 text-ink-500 hover:border-ink-900 hover:text-ink-900',
+              ]}
+            >
+              {filter.label}
+              <span class="ml-1.5 text-[0.75rem] opacity-55">{filter.count}</span>
+            </button>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="shell pb-24">
+    <div
+      data-gallery="arkiv"
+      data-photo-archive
+      class="columns-2 gap-3 md:columns-3 md:gap-4 xl:columns-4"
+    >
+      {
+        photos.map((photo, index) => (
+          <button
+            type="button"
+            data-gallery-item={index}
+            data-kind={photo.entryKind}
+            aria-label={`Åbn billede fra ${photo.entryTitle}`}
+            class="group relative mb-3 block w-full break-inside-avoid overflow-hidden rounded-xl bg-sand-100 shadow-soft transition-all duration-500 hover:shadow-lift md:mb-4 md:rounded-2xl cursor-zoom-in"
+            style={`aspect-ratio:${ratioOf(photo.src)}`}
+          >
+            <SmartImage
+              image={photo}
+              widths={[300, 500, 750, 1000]}
+              sizes="(max-width: 768px) 50vw, (max-width: 1280px) 33vw, 25vw"
+              loading={index < 6 ? 'eager' : 'lazy'}
+              class="img-zoom h-full w-full object-cover"
+            />
+
+            <span class="pointer-events-none absolute inset-0 bg-gradient-to-t from-ink-900/72 via-ink-900/5 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+
+            <span class="pointer-events-none absolute inset-x-0 bottom-0 translate-y-3 p-4 text-left opacity-0 transition-all duration-500 group-hover:translate-y-0 group-hover:opacity-100">
+              <span class="block text-[0.66rem] uppercase tracking-[0.15em] text-white/60">
+                {KIND_LABEL[photo.entryKind].singular} · {formatYear(photo.entryDate)}
+              </span>
+              <span class="mt-1 block font-[--font-display] text-[1rem] leading-tight text-white">
+                {photo.entryTitle}
+              </span>
+            </span>
+          </button>
+        ))
+      }
+    </div>
+
+    <p data-archive-empty hidden class="py-20 text-center text-ink-400">
+      Ingen billeder i denne kategori endnu.
+    </p>
+
+    <script is:inline type="application/json" data-gallery-data="arkiv" set:html={payload} />
+  </section>
+</Base>
+
+<script>
+  /**
+   * Filtrering af arkivet. Ud over at skjule billeder skrives galleriets
+   * datablok om, så fuldskærmsvisningen kun indeholder det, man ser —
+   * pilene navigerer aldrig hen i noget skjult.
+   */
+  const setup = () => {
+    const container = document.querySelector<HTMLElement>('[data-photo-archive]');
+    const dataNode = document.querySelector<HTMLScriptElement>('script[data-gallery-data="arkiv"]');
+    const chips = document.querySelectorAll<HTMLButtonElement>('[data-photo-filter]');
+    const empty = document.querySelector<HTMLElement>('[data-archive-empty]');
+    if (!container || !dataNode || !chips.length) return;
+
+    const source = JSON.parse(dataNode.textContent ?? '{"photos":[]}');
+    const all: unknown[] = source.photos ?? [];
+    const items = [...container.querySelectorAll<HTMLElement>('[data-gallery-item]')];
+
+    const activeClasses = ['border-ink-900', 'bg-ink-900', 'text-paper'];
+    const idleClasses = ['border-sand-300', 'text-ink-500'];
+
+    const apply = (filter: string) => {
+      const visible: unknown[] = [];
+
+      items.forEach((item, originalIndex) => {
+        const show = filter === 'alle' || item.dataset.kind === filter;
+        item.hidden = !show;
+
+        if (show) {
+          item.dataset.galleryItem = String(visible.length);
+          visible.push(all[originalIndex]);
+        }
+      });
+
+      dataNode.textContent = JSON.stringify({ title: source.title, photos: visible });
+      if (empty) empty.hidden = visible.length > 0;
+    };
+
+    chips.forEach((chip) => {
+      chip.addEventListener('click', () => {
+        chips.forEach((other) => {
+          const isActive = other === chip;
+          other.setAttribute('aria-pressed', String(isActive));
+          other.classList.toggle('hover:border-ink-900', !isActive);
+          other.classList.toggle('hover:text-ink-900', !isActive);
+          activeClasses.forEach((cls) => other.classList.toggle(cls, isActive));
+          idleClasses.forEach((cls) => other.classList.toggle(cls, !isActive));
+        });
+
+        apply(chip.dataset.photoFilter ?? 'alle');
+      });
+    });
+  };
+
+  setup();
+  document.addEventListener('astro:page-load', setup);
+</script>

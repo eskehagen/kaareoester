@@ -1,0 +1,207 @@
+---
+import Logo from '~/components/Logo.astro';
+
+interface Props {
+  transparent?: boolean;
+}
+
+const { transparent = false } = Astro.props;
+const path = Astro.url.pathname;
+
+const links = [
+  { href: '/rejser', label: 'Rejser' },
+  { href: '/projekter', label: 'Projekter' },
+  { href: '/boeger', label: 'Bøger' },
+  { href: '/galleri', label: 'Galleri' },
+  { href: '/biografi', label: 'Biografi' },
+];
+
+const isActive = (href: string) => path === href || path.startsWith(`${href}/`);
+---
+
+<header
+  data-header
+  data-transparent={transparent ? 'true' : 'false'}
+  class:list={[
+    'fixed inset-x-0 top-0 z-50 transition-[background-color,box-shadow,backdrop-filter] duration-500',
+    transparent ? 'bg-transparent' : 'bg-paper/85 shadow-[0_1px_0_rgb(0_0_0/0.05)] backdrop-blur-xl',
+  ]}
+>
+  <div class="shell flex h-[var(--header-height)] items-center justify-between gap-6">
+    <a href="/" class="group relative z-10 flex items-center gap-3" aria-label="Kaare Øster — forside">
+      <Logo class="h-9 w-9 transition-transform duration-500 group-hover:rotate-[8deg]" />
+      <span class="hidden font-[--font-display] text-[1.06rem] tracking-tight text-ink-900 sm:block">
+        Kaare Øster
+      </span>
+    </a>
+
+    <nav aria-label="Hovedmenu" class="hidden items-center gap-1 md:flex">
+      {
+        links.map((link) => (
+          <a
+            href={link.href}
+            aria-current={isActive(link.href) ? 'page' : undefined}
+            class:list={[
+              'relative rounded-full px-4 py-2 text-[0.9rem] transition-colors duration-300',
+              isActive(link.href)
+                ? 'text-ink-900'
+                : 'text-ink-500 hover:text-ink-900',
+            ]}
+          >
+            {isActive(link.href) && (
+              <span class="absolute inset-0 -z-10 rounded-full bg-sand-100" aria-hidden="true" />
+            )}
+            {link.label}
+          </a>
+        ))
+      }
+      <a
+        href="/kontakt"
+        class="ml-2 rounded-full bg-ink-900 px-5 py-2.5 text-[0.85rem] text-paper transition-all duration-300 hover:bg-clay-600 hover:shadow-[0_10px_24px_-10px_var(--color-clay-600)]"
+      >
+        Kontakt
+      </a>
+    </nav>
+
+    <button
+      type="button"
+      data-menu-toggle
+      aria-expanded="false"
+      aria-controls="mobilmenu"
+      class="relative z-10 -mr-2 inline-flex h-11 w-11 items-center justify-center rounded-full text-ink-800 transition-colors hover:bg-sand-100 md:hidden"
+    >
+      <span class="sr-only">Åbn menu</span>
+      <span class="relative block h-4 w-6">
+        <span data-bar="1" class="absolute left-0 top-0.5 block h-[1.5px] w-6 rounded bg-current transition-transform duration-400"></span>
+        <span data-bar="2" class="absolute left-0 top-[7px] block h-[1.5px] w-6 rounded bg-current transition-opacity duration-300"></span>
+        <span data-bar="3" class="absolute left-0 top-[13.5px] block h-[1.5px] w-6 rounded bg-current transition-transform duration-400"></span>
+      </span>
+    </button>
+  </div>
+
+  <!-- Mobilmenu -->
+  <div
+    id="mobilmenu"
+    data-menu-panel
+    hidden
+    class="fixed inset-0 z-0 bg-paper md:hidden"
+  >
+    <nav
+      aria-label="Mobilmenu"
+      class="shell flex h-full flex-col justify-center gap-1 pb-20"
+    >
+      {
+        [...links, { href: '/kontakt', label: 'Kontakt' }].map((link, index) => (
+          <a
+            href={link.href}
+            style={`--i:${index}`}
+            data-menu-link
+            class="border-b border-sand-200 py-4 font-[--font-display] text-[1.9rem] tracking-tight text-ink-900 transition-colors hover:text-clay-600"
+          >
+            {link.label}
+          </a>
+        ))
+      }
+    </nav>
+  </div>
+</header>
+
+<style>
+  [data-menu-panel][hidden] {
+    display: none;
+  }
+
+  [data-menu-link] {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+
+  /*
+    Hviletilstanden er synlig — animationen tilfører kun den forskudte
+    indtoning. Navigationen må aldrig blive usynlig, hvis en animation
+    af en eller anden grund ikke kører.
+  */
+  [data-menu-panel].is-open [data-menu-link] {
+    opacity: 1;
+    transform: none;
+    animation: menu-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+    animation-delay: calc(var(--i) * 60ms + 80ms);
+  }
+
+  @keyframes menu-in {
+    from {
+      opacity: 0;
+      transform: translateY(14px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  [data-menu-toggle][aria-expanded='true'] [data-bar='1'] {
+    transform: translateY(6.5px) rotate(45deg);
+  }
+  [data-menu-toggle][aria-expanded='true'] [data-bar='2'] {
+    opacity: 0;
+  }
+  [data-menu-toggle][aria-expanded='true'] [data-bar='3'] {
+    transform: translateY(-6.5px) rotate(-45deg);
+  }
+</style>
+
+<script>
+  /** Sidehovedet bliver massivt, så snart man ruller — og mobilmenuen styres her. */
+  const setup = () => {
+    const header = document.querySelector<HTMLElement>('[data-header]');
+    const toggle = document.querySelector<HTMLButtonElement>('[data-menu-toggle]');
+    const panel = document.querySelector<HTMLElement>('[data-menu-panel]');
+    if (!header) return;
+
+    const transparent = header.dataset.transparent === 'true';
+
+    const onScroll = () => {
+      const scrolled = window.scrollY > 24;
+      if (!transparent) return;
+      header.classList.toggle('bg-paper/85', scrolled);
+      header.classList.toggle('backdrop-blur-xl', scrolled);
+      header.classList.toggle('shadow-[0_1px_0_rgb(0_0_0/0.05)]', scrolled);
+    };
+
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+
+    if (!toggle || !panel) return;
+
+    const setOpen = (open: boolean) => {
+      toggle.setAttribute('aria-expanded', String(open));
+      document.body.style.overflow = open ? 'hidden' : '';
+      if (open) {
+        panel.hidden = false;
+        // Fremtving et layout-gennemløb, så animationen starter fra
+        // udgangspunktet. Mere pålideligt end requestAnimationFrame,
+        // der ikke udløses i en skjult fane.
+        void panel.offsetHeight;
+        panel.classList.add('is-open');
+      } else {
+        panel.classList.remove('is-open');
+        panel.hidden = true;
+      }
+    };
+
+    toggle.addEventListener('click', () =>
+      setOpen(toggle.getAttribute('aria-expanded') !== 'true'),
+    );
+
+    panel.addEventListener('click', (event) => {
+      if ((event.target as Element).closest('a')) setOpen(false);
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && toggle.getAttribute('aria-expanded') === 'true') setOpen(false);
+    });
+  };
+
+  setup();
+  document.addEventListener('astro:page-load', setup);
+</script>

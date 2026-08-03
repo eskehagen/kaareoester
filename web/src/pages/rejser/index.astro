@@ -1,0 +1,15 @@
+---
+import Category from '~/layouts/Category.astro';
+import { cms } from '~/lib/cms';
+
+const entries = await cms.getEntries({ kind: 'rejse' });
+---
+
+<Category
+  kind="rejse"
+  eyebrow="Rejser"
+  title="Fra Kiribati til Kattegat"
+  description="Rejsereportager, feltnoter og billeder fra tre årtiers arbejde med geografi — atoller der forsvinder i havet, arktiske landskaber, kinesiske megabyer og danske kyster."
+  metaDescription="Rejsereportager og billeder fra Kaare Østers rejser: Kiribati, Svalbard, Grønland, Bhutan, Kina, Vietnam, Sicilien og Danmark."
+  entries={entries}
+/>

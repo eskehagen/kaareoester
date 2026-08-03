@@ -1,0 +1,114 @@
+---
+/**
+ * Galleriets controller.
+ *
+ * Kun dette lille stykke vanilla-JS ligger på siden fra start. Det
+ * lytter på klik, og først når nogen faktisk åbner et billede, hentes
+ * den tunge del (React + Framer Motion) som en separat chunk. Modulet
+ * forhentes allerede, når musen rammer et miniaturebillede, så åbningen
+ * føles øjeblikkelig.
+ */
+---
+
+<div id="lightbox-root"></div>
+
+<script>
+  import { OPEN_GALLERY_EVENT, type GalleryPhoto, type OpenGalleryDetail } from './types';
+
+  type MountModule = typeof import('./mount');
+
+  let pending: Promise<MountModule> | null = null;
+  const loadGallery = () => (pending ??= import('./mount'));
+
+  const rectOf = (element: Element) => {
+    const { top, left, width, height } = element.getBoundingClientRect();
+    return { top, left, width, height };
+  };
+
+  function readGalleryData(galleryId: string): { photos: GalleryPhoto[]; title?: string } | null {
+    const node = document.querySelector<HTMLScriptElement>(
+      `script[data-gallery-data="${CSS.escape(galleryId)}"]`,
+    );
+    if (!node?.textContent) return null;
+
+    try {
+      return JSON.parse(node.textContent);
+    } catch {
+      return null;
+    }
+  }
+
+  async function open(detail: Parameters<MountModule['openGallery']>[0]) {
+    const { openGallery } = await loadGallery();
+    openGallery(detail);
+  }
+
+  const setup = () => {
+    /* Forhent ved første kontakt med et galleri — så er koden klar ved klik. */
+    const warm = () => loadGallery();
+    document.addEventListener('pointerover', (event) => {
+      if ((event.target as Element | null)?.closest?.('[data-gallery-item]')) warm();
+    }, { passive: true, once: true });
+    document.addEventListener('touchstart', (event) => {
+      if ((event.target as Element | null)?.closest?.('[data-gallery-item]')) warm();
+    }, { passive: true, once: true });
+
+    /* Klik på et miniaturebillede */
+    document.addEventListener('click', (event) => {
+      if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey) return;
+
+      const trigger = (event.target as Element | null)?.closest?.<HTMLElement>('[data-gallery-item]');
+      if (!trigger) return;
+
+      const galleryId = trigger.closest<HTMLElement>('[data-gallery]')?.dataset.gallery;
+      if (!galleryId) return;
+
+      const data = readGalleryData(galleryId);
+      if (!data?.photos?.length) return;
+
+      event.preventDefault();
+
+      const image = trigger.querySelector('img');
+      const index = Number(trigger.dataset.galleryItem ?? 0);
+
+      open({
+        photos: data.photos,
+        index: Number.isFinite(index) ? index : 0,
+        origin: rectOf(image ?? trigger),
+        originAspect:
+          image instanceof HTMLImageElement && image.naturalWidth
+            ? image.naturalWidth / image.naturalHeight
+            : undefined,
+        title: data.title,
+        galleryId,
+      });
+    });
+
+    /* Programmatisk åbning: document.dispatchEvent(new CustomEvent('kaare:open-gallery', { detail })) */
+    document.addEventListener(OPEN_GALLERY_EVENT, (event) => {
+      const detail = (event as CustomEvent<OpenGalleryDetail>).detail;
+      if (detail?.photos?.length) open({ ...detail, index: detail.index ?? 0 });
+    });
+
+    /* Dybt link: #g=<galleri>&i=<nummer> åbner billedet direkte */
+    const hash = window.location.hash.slice(1);
+    if (hash.startsWith('g=')) {
+      const params = new URLSearchParams(hash);
+      const galleryId = params.get('g');
+      const data = galleryId ? readGalleryData(galleryId) : null;
+
+      if (galleryId && data?.photos?.length) {
+        const index = Number(params.get('i') ?? 0);
+        open({
+          photos: data.photos,
+          index: Number.isFinite(index) ? Math.min(Math.max(0, index), data.photos.length - 1) : 0,
+          title: data.title,
+          galleryId,
+          skipHistory: true,
+        });
+      }
+    }
+  };
+
+  setup();
+</script>

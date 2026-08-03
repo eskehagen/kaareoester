@@ -1,0 +1,292 @@
+---
+import Base from '~/layouts/Base.astro';
+import SmartImage from '~/components/SmartImage.astro';
+import { cms } from '~/lib/cms';
+
+const bio = await cms.getBiography();
+const settings = await cms.getSettings();
+const entries = await cms.getEntries();
+
+const boeger = entries.filter((entry) => entry.kind === 'bog').length;
+const rejser = entries.filter((entry) => entry.kind === 'rejse').length;
+---
+
+<Base
+  title="Biografi & CV"
+  description={`${bio.name} — ${bio.role}. ${bio.intro[0]}`}
+  image={bio.portrait?.src}
+>
+  <!-- ============================== TOP ============================== -->
+  <section class="relative overflow-hidden pt-[var(--header-height)]">
+    <div
+      class="pointer-events-none absolute -right-40 top-0 h-[32rem] w-[32rem] rounded-[var(--radius-blob)] bg-clay-400/12 blur-3xl"
+      aria-hidden="true"
+    >
+    </div>
+
+    <div class="shell grid items-center gap-14 py-16 md:py-24 lg:grid-cols-[0.85fr_1.15fr] lg:gap-20">
+      {
+        bio.portrait && (
+          <div class="relative mx-auto w-full max-w-sm lg:mx-0" data-reveal="scale">
+            <div class="overflow-hidden rounded-[var(--radius-blob)] shadow-frame">
+              <SmartImage
+                image={bio.portrait}
+                widths={[400, 700, 1000]}
+                sizes="(max-width: 1024px) 80vw, 28rem"
+                loading="eager"
+                fetchpriority="high"
+                class="aspect-[4/5] h-full w-full object-cover"
+              />
+            </div>
+            <div
+              class="pointer-events-none absolute -bottom-5 -left-5 hidden h-24 w-24 rounded-[var(--radius-blob)] border border-sand-300 bg-paper/70 backdrop-blur-sm lg:block animate-float"
+              aria-hidden="true"
+            />
+          </div>
+        )
+      }
+
+      <div>
+        <p class="eyebrow" data-reveal>Biografi</p>
+        <h1 class="mt-4 text-hero" data-reveal style="--reveal-delay:60ms">{bio.name}</h1>
+        <p
+          class="mt-4 font-[--font-display] text-xl text-clay-600"
+          data-reveal
+          style="--reveal-delay:110ms"
+        >
+          {bio.role}
+        </p>
+
+        <div class="mt-8 space-y-5 text-[1.02rem] leading-[1.78] text-ink-500">
+          {
+            bio.intro.map((paragraph, index) => (
+              <p data-reveal style={`--reveal-delay:${160 + index * 70}ms`}>
+                {paragraph}
+              </p>
+            ))
+          }
+        </div>
+
+        <div class="mt-10 flex flex-wrap gap-3" data-reveal style="--reveal-delay:400ms">
+          <a
+            href={`mailto:${settings.email}`}
+            class="rounded-full bg-ink-900 px-7 py-3.5 text-[0.92rem] text-paper transition-all duration-400 hover:bg-clay-600"
+          >
+            Skriv til mig
+          </a>
+          <button
+            type="button"
+            data-print
+            class="rounded-full border border-sand-300 px-7 py-3.5 text-[0.92rem] text-ink-700 transition-all duration-400 hover:border-ink-900 hover:bg-sand-50"
+          >
+            Print CV
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================= FAKTA ============================= -->
+  <section class="border-y border-sand-200 bg-sand-50">
+    <dl class="shell grid gap-8 py-10 sm:grid-cols-2 lg:grid-cols-4">
+      {
+        bio.facts.map((fact, index) => (
+          <div data-reveal style={`--reveal-delay:${index * 70}ms`}>
+            <dt class="text-[0.7rem] uppercase tracking-[0.16em] text-ink-400">{fact.label}</dt>
+            <dd class="mt-2 text-[0.98rem] text-ink-800">{fact.value}</dd>
+          </div>
+        ))
+      }
+    </dl>
+  </section>
+
+  <!-- ============================= CITAT ============================= -->
+  {
+    bio.quote && (
+      <section class="shell py-20 md:py-28">
+        <blockquote class="mx-auto max-w-4xl text-center" data-reveal>
+          <p class="font-[--font-display] text-[1.6rem] leading-[1.35] tracking-tight text-ink-900 md:text-[2.35rem]">
+            <span class="text-clay-500">»</span>
+            {bio.quote.text}
+            <span class="text-clay-500">«</span>
+          </p>
+          {bio.quote.source && (
+            <cite class="mt-6 block text-[0.8rem] uppercase not-italic tracking-[0.16em] text-ink-400">
+              {bio.quote.source}
+            </cite>
+          )}
+        </blockquote>
+      </section>
+    )
+  }
+
+  <!-- =========================== ERFARING ============================ -->
+  <section class="shell pb-8" aria-labelledby="erfaring-titel">
+    <div class="grid gap-12 lg:grid-cols-[16rem_1fr] lg:gap-16">
+      <div class="lg:sticky lg:top-28 lg:self-start">
+        <p class="eyebrow">Erfaring</p>
+        <h2 id="erfaring-titel" class="mt-3 text-title">Udvalgte forløb</h2>
+        <p class="mt-4 text-[0.95rem] leading-relaxed text-ink-500">
+          Et udpluk af bøger, materialer og projekter fra de seneste årtier.
+        </p>
+      </div>
+
+      <ol class="relative border-l border-sand-200 pl-8 md:pl-10">
+        {
+          bio.experience.map((item, index) => (
+            <li class="relative pb-11 last:pb-0" data-reveal style={`--reveal-delay:${index * 60}ms`}>
+              <span
+                class="absolute -left-[calc(2rem+5px)] top-2 grid h-2.5 w-2.5 place-items-center rounded-full bg-clay-500 md:-left-[calc(2.5rem+5px)]"
+                aria-hidden="true"
+              />
+              <p class="text-[0.78rem] uppercase tracking-[0.14em] text-clay-600">{item.period}</p>
+              <h3 class="mt-2 font-[--font-display] text-[1.25rem] leading-snug text-ink-900">
+                {item.title}
+              </h3>
+              {item.organisation && (
+                <p class="mt-1 text-[0.9rem] text-ink-400">{item.organisation}</p>
+              )}
+              {item.description && (
+                <p class="mt-3 max-w-2xl text-[0.96rem] leading-relaxed text-ink-500">
+                  {item.description}
+                </p>
+              )}
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <!-- ========================== UDDANNELSE =========================== -->
+  {
+    bio.education.length > 0 && (
+      <section class="shell py-16" aria-labelledby="uddannelse-titel">
+        <div class="grid gap-12 lg:grid-cols-[16rem_1fr] lg:gap-16">
+          <div>
+            <p class="eyebrow">Uddannelse</p>
+            <h2 id="uddannelse-titel" class="mt-3 text-title">Baggrund</h2>
+          </div>
+          <ol class="space-y-8">
+            {bio.education.map((item) => (
+              <li data-reveal>
+                <p class="text-[0.78rem] uppercase tracking-[0.14em] text-clay-600">
+                  {item.period}
+                </p>
+                <h3 class="mt-2 font-[--font-display] text-[1.2rem] text-ink-900">{item.title}</h3>
+                {item.organisation && (
+                  <p class="mt-1 text-[0.9rem] text-ink-400">{item.organisation}</p>
+                )}
+              </li>
+            ))}
+          </ol>
+        </div>
+      </section>
+    )
+  }
+
+  <!-- ===================== KOMPETENCER & SAMARBEJDE ================== -->
+  <section class="shell py-16 md:py-24">
+    <div class="grid gap-14 md:grid-cols-2 md:gap-20">
+      <div data-reveal>
+        <p class="eyebrow">Arbejdsområder</p>
+        <ul class="mt-6 flex flex-wrap gap-2.5">
+          {
+            bio.skills.map((skill) => (
+              <li class="rounded-full border border-sand-300 px-4 py-2 text-[0.88rem] text-ink-700 transition-colors duration-300 hover:border-clay-400 hover:bg-clay-400/8">
+                {skill}
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+
+      <div data-reveal style="--reveal-delay:100ms">
+        <p class="eyebrow">Samarbejdspartnere</p>
+        <ul class="mt-6 grid gap-x-8 gap-y-3 sm:grid-cols-2">
+          {
+            bio.partners.map((partner) => (
+              <li class="flex items-baseline gap-3 text-[0.96rem] text-ink-700">
+                <span class="h-1 w-1 shrink-0 rounded-full bg-clay-400" aria-hidden="true" />
+                {partner}
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================= UDVALGTE VÆRKER ======================= -->
+  {
+    bio.selectedWorks.length > 0 && (
+      <section class="border-t border-sand-200 bg-sand-50 py-20" aria-labelledby="vaerker-titel">
+        <div class="shell">
+          <p class="eyebrow" data-reveal>Udvalgte værker</p>
+          <h2 id="vaerker-titel" class="mt-3 text-title" data-reveal>
+            Bibliografi i udvalg
+          </h2>
+
+          <ul class="mt-10 divide-y divide-sand-200 border-y border-sand-200">
+            {bio.selectedWorks.map((work, index) => (
+              <li
+                class="group flex flex-col gap-1 py-5 sm:flex-row sm:items-baseline sm:gap-8"
+                data-reveal
+                style={`--reveal-delay:${index * 50}ms`}
+              >
+                <span class="w-16 shrink-0 font-[--font-display] text-[0.95rem] text-clay-600 tabular-nums">
+                  {work.period}
+                </span>
+                <span class="flex-1 text-[1.05rem] text-ink-900">{work.title}</span>
+                {work.organisation && (
+                  <span class="text-[0.88rem] text-ink-400">{work.organisation}</span>
+                )}
+              </li>
+            ))}
+          </ul>
+
+          <p class="mt-8 text-[0.9rem] text-ink-400">
+            Se alle <a href="/boeger" class="link-underline text-clay-600">{boeger} udgivelser</a> og
+            <a href="/rejser" class="link-underline text-clay-600">{rejser} rejser</a>.
+          </p>
+        </div>
+      </section>
+    )
+  }
+</Base>
+
+<style>
+  /* Print: CV'et skal kunne gemmes som PDF og se ordentligt ud. */
+  @media print {
+    :global(header),
+    :global(footer),
+    [data-print],
+    :global(a[href='/galleri']) {
+      display: none !important;
+    }
+
+    :global(body::before) {
+      display: none;
+    }
+
+    :global(*) {
+      box-shadow: none !important;
+    }
+
+    :global(section) {
+      break-inside: avoid;
+      padding-block: 1.25rem !important;
+    }
+  }
+</style>
+
+<script>
+  const setup = () => {
+    document
+      .querySelector<HTMLButtonElement>('[data-print]')
+      ?.addEventListener('click', () => window.print());
+  };
+
+  setup();
+  document.addEventListener('astro:page-load', setup);
+</script>

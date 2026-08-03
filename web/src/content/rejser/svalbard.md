@@ -1,0 +1,102 @@
+---
+title: "Svalbard"
+date: 2017-06-11
+summary: "... at Arktis har fået sit navn fra det stjernebillede på den nordlige himmel, som grækerne kaldte for Arctos (Bjørnen)? Isbjørn skudt på Bjørnøya den 19 juli 2009 - og flået af…"
+cover: "/billeder/2017-06-11-isbjorn-skilt-low.jpg"
+gallery:
+  - src: "/billeder/2017-06-11-isbjorn-low.jpg"
+    alt: ""
+  - src: "/billeder/2017-06-11-isbjorn-skilt-low.jpg"
+    alt: ""
+  - src: "/billeder/2017-06-11-ren-low.jpg"
+    alt: ""
+tags:
+  - "Verden"
+  - "Arktis"
+featured: true
+---
+
+## Rejse til det kolde Svalbard  - tæt på Arktis.
+
+
+## Vidste du ... ?
+
+
+... at Arktis har fået sit navn fra det stjernebillede på den nordlige himmel, som grækerne kaldte for Arctos (Bjørnen)?
+
+Isbjørn skudt på Bjørnøya den 19 juli 2009 - og flået af Sysselmanden i Longyearbyn dagen efter.
+
+
+![beskriv billedet](/billeder/2017-06-11-isbjorn-low.jpg)
+
+
+## Nordatlantens Hus, København
+
+
+The [**Arctic Council** ](http://www.arcticpeoples.org/)**Indigenous Peoples’ Secretariat** is a support Secretariat for the International Indigenous Peoples’ Organizations that are Permanent Participants to the [**Arctic Council**](http://www.arctic-council.org/) .
+
+Erik Gant
+Acting Executive Secretary
+Strandgade 91,2
+DK-1401 Copenhagen K
+Phone; +45 27 82 01 77
+
+
+## Artic Council
+
+
+Fra forår 2009 - 2011 har Danmark formandsskabet i Artic Council - men sekretariatet forbliver i Trømsø. Se her hvad formandskabet vil satse på.
+
+The Norwegian Polar Institute is hosting the Arctic Council Secretariat, located at Polarmiljøsenteret, the Polar Environmental Center, which houses many Arctic institutions and companies, focusing on environmental research and cooperation in the Arctic.
+
+There are six Working Groups of the Arctic Council:
+
+
+ 
+- Arctic Contaminants Action Program (ACAP)
+ 
+- Arctic Monitoring and Assessment Programme (AMAP)
+ 
+- Conservation of Arctic Flora and Fauna (CAFF)
+ 
+- Emergency Prevention, Preparedness and Response (EPPR)
+ 
+- Protection of the Arctic Marine Environment (PAME)
+ 
+- Sustainable Development Working Group (SDWG)
+
+
+Arctic Council is the relevant regional body covering the Arctic, its nations and peoples and in order to respond to the increased interest for arctic matters the chairmanship will seek to highlight Arctic perspectives and concerns in the relevant international processes.
+
+
+![beskriv billedet](/billeder/2017-06-11-ren-low.jpg)
+
+
+## Nordøstpassagen – en ny smutvej
+
+
+**I Arktis er infrastrukturerne helt anderledes end de fleste andre steder. Du tager ikke bare cyklen eller bilen, når du skal hen til kiosken eller på arbejde. Havet, isen og polarklimaet dominerer, og det kan være rigtig besværligt at komme rundt. Vejnettet er yderst begrænset, så skibsfart og flytrafik er den hyppigste transportform.**
+
+Efter at temperaturstigningen har smeltet mere og mere havis omkring Nordpolen, er der ved at blive åbnet op for sommertrafik gennem Nordøstpassagen. Det giver nye muligheder for verdenshandelen – men også store udfordringer.
+Søfarerne ledte og ledte
+Siden 1500-tallet har man forsøgt at finde søvejen nord om Europa og Asien for at nå nemmere ud i Stillehavet. Søfarere som hollandske Willem Barents og danske Vitus Bering (1681-1741) ledte forgæves, før det endelig lykkedes for finsk/svenske A.E. Nordenskjöld (1832-1901 ) at sejle igennem Nordøstpassagen med dampskibet Vegas i 1878-79.
+
+Vega blev ledsaget at tre andre robuste skibe. Ekspeditionen overvintrede ti måneder fastfrosset i Beringsstrædet, hvorefter de fortsatte mod Japan. Nordenskjöld havde bevist, at det var muligt at passere Nordøstpassagen. Han blev udråbt som en polarhelt, selv om hjemturen til Europa foregik via troperne og Suez-kanalen.
+
+Der skulle dog gå mange år efter Nordenskjölds bedrifter, før Nordøstpassagen virkelig kom til at betyde noget for verdens handel og trafik.
+Der er penge og CO2 at spare …
+Når gods og varer skal fragtes rundt fra sted til sted, er der brug for en effektiv transport. Men samtidig skal det tænkes i natur og miljø, så påvirkningen bliver så lille som mulig. Især i det arktiske klima kan enhver påvirkning få katastrofale følger for miljøet.
+
+Det tyske rederi Beluga har i 2009 som det første fået en aftale med de russiske myndigheder. Med to skibe åbnede rederiet i sommermånederne en kommerciel fragtrute gennem Nordøstpassagen og de isfyldte farvande.
+
+Belugas to skibe var lastet med tungt specialgods fra Sydkorea og tog turen fra den russiske havneby Vladivostok i Japanske Hav, forbi den russiske og norske kyst og videre til den hollandske havneby Rotterdam.
+
+Den globale opvarmning har ikke kun negative konsekvenser for kloden. Nordøstpassagen kan nu åbnes for skibstrafik i en del af året. Genvejen gennem Arktis gør sejlruten mellem Asien og Europa omkring 4.000 sømil eller cirka 7.500 km kortere, end hvis man sejler den sædvanlige rute via Suez-kanalen. Samtidig kan skibene spare store mængder brændstof og CO2-udslip.
+
+Rederiets direktør fortæller: - Ved at benytte Nordøstpassagen kan vi realisere en helt enorm reduktion i vores brændstofforbrug og dermed skåne verden for tilsvarende CO2-udledninger såvel som andre skadelige emissioner.
+Torm – det danske rederi
+Helt nye skibe er taget i brug - med henblik på den nye smutvej ...
+Trafikalt farvand
+Hidtil har det mest været noget for ekspeditioner, isbrydere og u-både at besejle det vanskelige farvand. Men nu starter en ny epoke, hvor skibe i større stil kan benytte smutvejen gennem Nordøstpassagen.
+
+Se også *Nordvestpassagen*

@@ -1,0 +1,128 @@
+---
+import SmartImage from '~/components/SmartImage.astro';
+import { processFullsize } from '~/lib/images';
+import type { CmsImage } from '~/lib/cms/types';
+
+interface Props {
+  photos: CmsImage[];
+  /** Vises som overskrift i fuldskærmsvisningen. */
+  title?: string;
+  /** Unikt id — indgår i det delbare link (#g=…&i=…). */
+  id: string;
+  /** Antal miniaturer der vises; resten ligger bag "+N". */
+  limit?: number;
+  layout?: 'mosaic' | 'grid' | 'strip';
+  class?: string;
+}
+
+const { photos, title, id, limit, layout = 'mosaic', class: className = '' } = Astro.props;
+
+const visible = limit ? photos.slice(0, limit) : photos;
+const hidden = photos.length - visible.length;
+
+/**
+ * Fuldskærmsvisningen skal have de store versioner, og de skal være
+ * genereret ved build — derfor processeres hele galleriet her.
+ */
+const fullsize = await Promise.all(
+  photos.map(async (photo) => {
+    const processed = await processFullsize(photo);
+    return {
+      ...photo,
+      src: processed.src,
+      width: processed.width,
+      height: processed.height,
+      aspectRatio: processed.aspectRatio,
+    };
+  }),
+);
+
+const payload = JSON.stringify({ title, photos: fullsize });
+
+/**
+ * Mosaikken pakker perfekt i et 6-kolonners gitter over 4 rækker og
+ * gentager sig derefter — det giver en redaktionel rytme frem for et
+ * stift kvadratnet, uden huller.
+ */
+const MOSAIC = [
+  'md:col-span-4 md:row-span-2',
+  'md:col-span-2 md:row-span-1',
+  'md:col-span-2 md:row-span-1',
+  'md:col-span-2 md:row-span-2',
+  'md:col-span-4 md:row-span-1',
+  'md:col-span-4 md:row-span-1',
+];
+
+/** Små gallerier fortjener deres eget layout frem for en halvtom mosaik. */
+const SMALL: Record<number, string[]> = {
+  1: ['md:col-span-6 md:row-span-3'],
+  2: ['md:col-span-3 md:row-span-2', 'md:col-span-3 md:row-span-2'],
+  3: ['md:col-span-4 md:row-span-2', 'md:col-span-2 md:row-span-1', 'md:col-span-2 md:row-span-1'],
+  4: [
+    'md:col-span-3 md:row-span-2',
+    'md:col-span-3 md:row-span-1',
+    'md:col-span-2 md:row-span-1',
+    'md:col-span-1 md:row-span-1',
+  ],
+};
+
+function cellClass(index: number): string {
+  if (layout === 'grid') return 'md:col-span-2 md:row-span-1';
+  if (layout === 'strip') return 'md:col-span-1 md:row-span-1';
+  const small = SMALL[visible.length];
+  if (small) return small[index] ?? MOSAIC[index % MOSAIC.length];
+  return MOSAIC[index % MOSAIC.length];
+}
+
+/** På mobil: hvert tredje billede går i fuld bredde — samme rytme, to kolonner. */
+const mobileClass = (index: number) => (index % 3 === 0 ? 'col-span-2' : 'col-span-1');
+---
+
+<figure class={`not-prose ${className}`}>
+  <div
+    data-gallery={id}
+    class="grid auto-rows-[120px] grid-cols-2 gap-2 sm:auto-rows-[150px] md:grid-cols-6 md:gap-3 lg:auto-rows-[168px]"
+  >
+    {
+      visible.map((photo, index) => (
+        <button
+          type="button"
+          data-gallery-item={index}
+          aria-label={`Åbn billede ${index + 1} af ${photos.length}${photo.caption ? `: ${photo.caption}` : ''}`}
+          class={`group relative overflow-hidden rounded-xl bg-sand-100 md:rounded-2xl ${mobileClass(index)} ${cellClass(index)} cursor-zoom-in`}
+        >
+          <SmartImage
+            image={photo}
+            widths={[320, 640, 960, 1280]}
+            sizes="(max-width: 768px) 50vw, 33vw"
+            loading={index < 4 ? 'eager' : 'lazy'}
+            class="img-zoom h-full w-full object-cover"
+          />
+
+          {/* Blød vignettering + billedtekst ved hover */}
+          <span class="pointer-events-none absolute inset-0 bg-gradient-to-t from-ink-900/55 via-transparent to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+
+          {photo.caption && (
+            <span class="pointer-events-none absolute inset-x-0 bottom-0 translate-y-2 p-3 text-left text-[0.78rem] leading-snug text-white opacity-0 transition-all duration-500 group-hover:translate-y-0 group-hover:opacity-100">
+              {photo.caption}
+            </span>
+          )}
+
+          <span class="pointer-events-none absolute right-2.5 top-2.5 grid h-8 w-8 scale-75 place-items-center rounded-full bg-white/85 text-ink-800 opacity-0 backdrop-blur-sm transition-all duration-400 group-hover:scale-100 group-hover:opacity-100">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round">
+              <path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" />
+            </svg>
+          </span>
+
+          {index === visible.length - 1 && hidden > 0 && (
+            <span class="pointer-events-none absolute inset-0 grid place-items-center bg-ink-900/55 backdrop-blur-[2px]">
+              <span class="font-[--font-display] text-2xl text-white md:text-3xl">+{hidden}</span>
+            </span>
+          )}
+        </button>
+      ))
+    }
+  </div>
+
+  <script is:inline type="application/json" data-gallery-data={id} set:html={payload} />
+</figure>

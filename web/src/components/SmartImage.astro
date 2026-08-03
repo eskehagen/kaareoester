@@ -1,0 +1,63 @@
+---
+import { Image } from 'astro:assets';
+import { resolveLocal } from '~/lib/images';
+import type { CmsImage } from '~/lib/cms/types';
+
+interface Props {
+  image: CmsImage;
+  /** Bredder til srcset. */
+  widths?: number[];
+  sizes?: string;
+  class?: string;
+  loading?: 'lazy' | 'eager';
+  fetchpriority?: 'high' | 'low' | 'auto';
+  /** Tvinger et sideforhold, fx "4/5". Uden dette bevares billedets eget. */
+  ratio?: string;
+  alt?: string;
+}
+
+const {
+  image,
+  widths = [400, 800, 1200, 1600],
+  sizes = '(max-width: 768px) 100vw, 50vw',
+  class: className = '',
+  loading = 'lazy',
+  fetchpriority,
+  ratio,
+  alt,
+} = Astro.props;
+
+const local = resolveLocal(image.src);
+const altText = alt ?? image.alt ?? '';
+const style = ratio ? `aspect-ratio:${ratio}` : undefined;
+---
+
+{
+  local ? (
+    <Image
+      src={local}
+      alt={altText}
+      widths={widths.filter((w) => w <= local.width)}
+      sizes={sizes}
+      format="webp"
+      quality={80}
+      loading={loading}
+      fetchpriority={fetchpriority}
+      decoding="async"
+      class={className}
+      style={style}
+    />
+  ) : (
+    <img
+      src={image.src}
+      alt={altText}
+      width={image.width}
+      height={image.height}
+      loading={loading}
+      fetchpriority={fetchpriority}
+      decoding="async"
+      class={className}
+      style={style}
+    />
+  )
+}
