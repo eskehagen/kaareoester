@@ -222,6 +222,30 @@ async function main() {
   // 3. Konvertér indlæg
   const postFiles = (await fs.readdir(POSTS)).filter((f) => f.endsWith('.md')).sort();
 
+  /**
+   * Flere indlæg kan dele samme dato. Så kan billederne ikke fordeles på
+   * datoen alene — de tildeles kun, hvis filnavnet indeholder et ord fra
+   * indlæggets slug. Ellers får indlægget intet galleri frem for et
+   * forkert et.
+   */
+  const postsPerDate = new Map();
+  for (const file of postFiles) {
+    const date = file.slice(0, 10);
+    postsPerDate.set(date, (postsPerDate.get(date) ?? 0) + 1);
+  }
+
+  const galleryFor = (date, slug) => {
+    const candidates = imagesByDate.get(date) ?? [];
+    if (candidates.length === 0) return [];
+    if ((postsPerDate.get(date) ?? 0) <= 1) return candidates;
+
+    const tokens = slug.split('-').filter((token) => token.length >= 4);
+    return candidates.filter((src) => {
+      const name = src.toLowerCase();
+      return tokens.some((token) => name.includes(token));
+    });
+  };
+
   for (const file of postFiles) {
     const raw = await fs.readFile(path.join(POSTS, file), 'utf8');
     const { data, body } = parseFrontmatter(raw);
@@ -236,7 +260,7 @@ async function main() {
       .map((tag) => titleCase(tag.trim()))
       .filter(Boolean);
 
-    const gallery = imagesByDate.get(datePart) ?? [];
+    const gallery = galleryFor(datePart, slug);
     const coverRaw = typeof data.image === 'string' ? data.image : '';
     const cover = DEAD_HOST.test(coverRaw)
       ? gallery[0] ?? ''
