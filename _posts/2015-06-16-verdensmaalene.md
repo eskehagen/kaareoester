@@ -4,6 +4,7 @@ title: "Verdensmålene"
 date: 2015-06-16
 categories:
   - "Projekter"
+image: "/assets/images/2015-06-16-fn_verdensm-l.jpg"
 ---
 
 Inddrage de 17 mål for en bæredygtig udvikling i mange sammenhænge. Bl.a. kan de systematisk indgå i arbejdet med temaet Global turisme.
