@@ -86,7 +86,7 @@ const words = heading.split(' ');
           >
             {stats.map((stat) => (
               <div>
-                <dt class="font-[--font-display] text-3xl text-ink-900">{stat.value}</dt>
+                <dt class="font-display text-3xl text-ink-900">{stat.value}</dt>
                 <dd class="mt-1 text-[0.78rem] uppercase tracking-[0.13em] text-ink-400">
                   {stat.label}
                 </dd>
@@ -134,12 +134,16 @@ const words = heading.split(' ');
 </section>
 
 <style>
+  /*
+     --intro-offset sættes af forsidens introanimation, så heroens
+     indtoning først går i gang, når forhænget er trukket fra.
+  */
   .hero-in,
   .hero-word {
     opacity: 0;
     transform: translateY(var(--y, 18px));
     animation: hero-rise 1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-    animation-delay: var(--d, 0ms);
+    animation-delay: calc(var(--d, 0ms) + var(--intro-offset, 0s));
   }
 
   .hero-word {
@@ -149,7 +153,8 @@ const words = heading.split(' ');
   .hero-image {
     opacity: 0;
     transform: scale(0.96);
-    animation: hero-frame 1.4s cubic-bezier(0.22, 1, 0.36, 1) 0.25s forwards;
+    animation: hero-frame 1.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    animation-delay: calc(250ms + var(--intro-offset, 0s));
   }
 
   @keyframes hero-rise {

@@ -1,5 +1,6 @@
 ---
 import Base from '~/layouts/Base.astro';
+import IntroOverlay from '~/components/IntroOverlay.astro';
 import Hero from '~/components/Hero.astro';
 import SectionHeading from '~/components/SectionHeading.astro';
 import EntryCard from '~/components/EntryCard.astro';
@@ -49,6 +50,8 @@ const stats = [
 ---
 
 <Base transparentHeader>
+  <IntroOverlay />
+
   <Hero
     eyebrow={settings.hero.eyebrow}
     heading={settings.hero.heading}

@@ -28,10 +28,26 @@ const isActive = (href: string) => path === href || path.startsWith(`${href}/`);
   ]}
 >
   <div class="shell flex h-[var(--header-height)] items-center justify-between gap-6">
-    <a href="/" class="group relative z-10 flex items-center gap-3" aria-label="Kaare Øster — forside">
-      <Logo class="h-9 w-9 transition-transform duration-500 group-hover:rotate-[8deg]" />
-      <span class="hidden font-[--font-display] text-[1.06rem] tracking-tight text-ink-900 sm:block">
-        Kaare Øster
+    <a
+      href="/"
+      class="group relative z-10 flex items-center gap-3"
+      aria-label="Kaare Øster — forside"
+    >
+      <Logo
+        labelled={false}
+        class="h-10 w-10 shrink-0 transition-transform duration-700 group-hover:rotate-[14deg]"
+      />
+      <span class="hidden leading-none sm:block">
+        <span
+          class="block font-display text-[1.12rem] tracking-tight text-brand-navy"
+        >
+          Kaare Øster
+        </span>
+        <span
+          class="mt-1 block text-[0.6rem] font-medium uppercase tracking-[0.24em] text-ink-400"
+        >
+          Fagforfatter
+        </span>
       </span>
     </a>
 
@@ -96,7 +112,7 @@ const isActive = (href: string) => path === href || path.startsWith(`${href}/`);
             href={link.href}
             style={`--i:${index}`}
             data-menu-link
-            class="border-b border-sand-200 py-4 font-[--font-display] text-[1.9rem] tracking-tight text-ink-900 transition-colors hover:text-clay-600"
+            class="border-b border-sand-200 py-4 font-display text-[1.9rem] tracking-tight text-ink-900 transition-colors hover:text-clay-600"
           >
             {link.label}
           </a>

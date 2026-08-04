@@ -40,6 +40,10 @@
   --color-ocean-500: #4f818e;
   --color-ocean-600: #3b6572;
 
+  /* --- Logoets egne farver — uændrede fra det oprindelige mærke --- */
+  --color-brand-navy: #1a3a5c;
+  --color-brand-teal: #2d7a6e;
+
   /* --- Typografi --- */
   --font-display: 'Fraunces Variable', 'Iowan Old Style', Georgia, serif;
   --font-sans: 'Inter Variable', ui-sans-serif, system-ui, sans-serif;

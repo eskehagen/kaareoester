@@ -50,7 +50,7 @@ const rejser = entries.filter((entry) => entry.kind === 'rejse').length;
         <p class="eyebrow" data-reveal>Biografi</p>
         <h1 class="mt-4 text-hero" data-reveal style="--reveal-delay:60ms">{bio.name}</h1>
         <p
-          class="mt-4 font-[--font-display] text-xl text-clay-600"
+          class="mt-4 font-display text-xl text-clay-600"
           data-reveal
           style="--reveal-delay:110ms"
         >
@@ -105,7 +105,7 @@ const rejser = entries.filter((entry) => entry.kind === 'rejse').length;
     bio.quote && (
       <section class="shell py-20 md:py-28">
         <blockquote class="mx-auto max-w-4xl text-center" data-reveal>
-          <p class="font-[--font-display] text-[1.6rem] leading-[1.35] tracking-tight text-ink-900 md:text-[2.35rem]">
+          <p class="font-display text-[1.6rem] leading-[1.35] tracking-tight text-ink-900 md:text-[2.35rem]">
             <span class="text-clay-500">»</span>
             {bio.quote.text}
             <span class="text-clay-500">«</span>
@@ -140,7 +140,7 @@ const rejser = entries.filter((entry) => entry.kind === 'rejse').length;
                 aria-hidden="true"
               />
               <p class="text-[0.78rem] uppercase tracking-[0.14em] text-clay-600">{item.period}</p>
-              <h3 class="mt-2 font-[--font-display] text-[1.25rem] leading-snug text-ink-900">
+              <h3 class="mt-2 font-display text-[1.25rem] leading-snug text-ink-900">
                 {item.title}
               </h3>
               {item.organisation && (
@@ -173,7 +173,7 @@ const rejser = entries.filter((entry) => entry.kind === 'rejse').length;
                 <p class="text-[0.78rem] uppercase tracking-[0.14em] text-clay-600">
                   {item.period}
                 </p>
-                <h3 class="mt-2 font-[--font-display] text-[1.2rem] text-ink-900">{item.title}</h3>
+                <h3 class="mt-2 font-display text-[1.2rem] text-ink-900">{item.title}</h3>
                 {item.organisation && (
                   <p class="mt-1 text-[0.9rem] text-ink-400">{item.organisation}</p>
                 )}
@@ -234,7 +234,7 @@ const rejser = entries.filter((entry) => entry.kind === 'rejse').length;
                 data-reveal
                 style={`--reveal-delay:${index * 50}ms`}
               >
-                <span class="w-16 shrink-0 font-[--font-display] text-[0.95rem] text-clay-600 tabular-nums">
+                <span class="w-16 shrink-0 font-display text-[0.95rem] text-clay-600 tabular-nums">
                   {work.period}
                 </span>
                 <span class="flex-1 text-[1.05rem] text-ink-900">{work.title}</span>

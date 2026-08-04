@@ -373,7 +373,7 @@ export default function Lightbox({
           <p className="truncate text-[0.68rem] font-semibold uppercase tracking-[0.2em] text-white/55">
             {title ?? 'Galleri'}
           </p>
-          <p className="mt-0.5 font-[--font-display] text-sm text-white/90 tabular-nums">
+          <p className="mt-0.5 font-display text-sm text-white/90 tabular-nums">
             {index + 1} <span className="text-white/40">/ {count}</span>
           </p>
         </div>

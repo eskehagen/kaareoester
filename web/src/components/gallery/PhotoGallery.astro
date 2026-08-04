@@ -116,7 +116,7 @@ const mobileClass = (index: number) => (index % 3 === 0 ? 'col-span-2' : 'col-sp
 
           {index === visible.length - 1 && hidden > 0 && (
             <span class="pointer-events-none absolute inset-0 grid place-items-center bg-ink-900/55 backdrop-blur-[2px]">
-              <span class="font-[--font-display] text-2xl text-white md:text-3xl">+{hidden}</span>
+              <span class="font-display text-2xl text-white md:text-3xl">+{hidden}</span>
             </span>
           )}
         </button>

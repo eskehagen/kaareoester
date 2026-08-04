@@ -1,0 +1,364 @@
+---
+/**
+ * Forsidens intro — logoets oprindelige optegningsanimation.
+ *
+ * Ringene tegnes op, skråstregen skydes ind, den grønne prik popper,
+ * og navnetrækket folder sig ud. Derefter løftes forhænget og afslører
+ * forsiden. Nøjagtig samme rytme og geometri som på det gamle site,
+ * bare strammet lidt op i tempoet.
+ *
+ * Robusthed:
+ *  · Rent CSS — forhænget forsvinder også uden JavaScript
+ *  · Vises kun én gang pr. browsersession
+ *  · Springes helt over ved prefers-reduced-motion
+ *  · Kan afbrydes med klik, tast eller scroll
+ *  · Sidens indhold ligger færdigt bagved hele tiden
+ */
+---
+
+<script is:inline>
+  /*
+   * Køres mens siden parses — altså før første maling. Har man set
+   * introen, eller har man bedt om reduceret bevægelse, når forhænget
+   * aldrig at blive tegnet.
+   */
+  (function () {
+    var KEY = 'kaare:intro-set';
+    var seen = false;
+
+    try {
+      seen = sessionStorage.getItem(KEY) === '1';
+    } catch (error) {
+      /* Privat browsing — introen vises så igen næste gang. */
+    }
+
+    if (seen || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      document.documentElement.classList.add('intro-seen');
+      return;
+    }
+
+    try {
+      sessionStorage.setItem(KEY, '1');
+    } catch (error) {
+      /* Ignoreres bevidst. */
+    }
+
+    document.body.style.overflow = 'hidden';
+
+    /*
+     * Forsidens egne indtoninger skal først løbe, når forhænget er
+     * væk. Variablen læses af Hero'ens animation-delay og sættes her,
+     * altså før elementerne overhovedet er tegnet.
+     */
+    document.documentElement.style.setProperty('--intro-offset', '1.75s');
+  })();
+</script>
+
+<div class="intro" data-intro aria-hidden="true">
+  <div class="intro-lockup">
+    <svg class="intro-mark" viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="intro-fill" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="rgba(255,255,255,0.18)"></stop>
+          <stop offset="100%" stop-color="rgba(45,122,110,0.45)"></stop>
+        </linearGradient>
+      </defs>
+
+      <!-- Ringene tegnes fra kl. 12 og rundt -->
+      <g transform="rotate(-90 120 120)">
+        <circle
+          class="intro-ring-outer"
+          cx="120"
+          cy="120"
+          r="110"
+          fill="url(#intro-fill)"
+          stroke="rgba(255,255,255,0.3)"
+          stroke-width="2"></circle>
+        <circle
+          class="intro-ring-inner"
+          cx="120"
+          cy="120"
+          r="72"
+          fill="none"
+          stroke="rgba(255,255,255,0.22)"
+          stroke-width="1.5"></circle>
+      </g>
+
+      <circle class="intro-disc" cx="120" cy="120" r="48" fill="rgba(26,58,92,0.75)"></circle>
+      <line
+        class="intro-slash"
+        x1="66"
+        y1="160"
+        x2="174"
+        y2="80"
+        stroke="white"
+        stroke-width="11"
+        stroke-linecap="round"></line>
+      <circle class="intro-dot" cx="173" cy="80" fill="#2d7a6e"></circle>
+    </svg>
+
+    <div class="intro-words">
+      <span class="intro-name">Kaare Øster</span>
+      <span class="intro-rule"></span>
+      <span class="intro-tag">Fagforfatter</span>
+    </div>
+  </div>
+</div>
+
+<style>
+  .intro {
+    position: fixed;
+    inset: 0;
+    z-index: 90;
+    display: grid;
+    place-items: center;
+    padding: 1.5rem;
+    background:
+      radial-gradient(ellipse at 50% 45%, #24506f 0%, #1a3a5c 45%, #142b44 100%);
+    animation: intro-curtain 0.75s cubic-bezier(0.65, 0, 0.35, 1) 1.85s forwards;
+  }
+
+  /* Set før, reduceret bevægelse eller allerede afbrudt: væk med det samme. */
+  :global(html.intro-seen) .intro {
+    display: none;
+  }
+
+  .intro-lockup {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.75rem;
+    animation: intro-lockup-out 0.6s cubic-bezier(0.65, 0, 0.35, 1) 1.85s forwards;
+  }
+
+  @media (min-width: 640px) {
+    .intro-lockup {
+      flex-direction: row;
+      gap: 2.5rem;
+    }
+  }
+
+  .intro-mark {
+    width: clamp(9rem, 26vw, 13rem);
+    height: auto;
+    overflow: visible;
+  }
+
+  /* --- Optegning af ringene --- */
+  .intro-ring-outer {
+    stroke-dasharray: 692;
+    stroke-dashoffset: 692;
+    animation: intro-draw-outer 0.95s cubic-bezier(0.4, 0, 0.2, 1) 0.12s forwards;
+  }
+
+  .intro-ring-inner {
+    stroke-dasharray: 453;
+    stroke-dashoffset: 453;
+    animation: intro-draw-inner 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.5s forwards;
+  }
+
+  .intro-disc {
+    opacity: 0;
+    transform-origin: 120px 120px;
+    animation: intro-disc-in 0.45s cubic-bezier(0.22, 1, 0.36, 1) 0.82s forwards;
+  }
+
+  .intro-slash {
+    stroke-dasharray: 135;
+    stroke-dashoffset: 135;
+    animation: intro-draw-slash 0.42s cubic-bezier(0.4, 0, 0.2, 1) 0.98s forwards;
+  }
+
+  .intro-dot {
+    r: 0;
+    opacity: 0;
+    animation: intro-dot-pop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) 1.32s forwards;
+  }
+
+  /* --- Navnetrækket --- */
+  .intro-words {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  @media (min-width: 640px) {
+    .intro-words {
+      align-items: flex-start;
+    }
+  }
+
+  .intro-name {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 6vw, 3.25rem);
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: #fff;
+    opacity: 0;
+    transform: translateY(12px);
+    animation: intro-text-up 0.6s cubic-bezier(0.22, 1, 0.36, 1) 1.12s forwards;
+  }
+
+  .intro-rule {
+    display: block;
+    width: min(15rem, 60vw);
+    height: 1px;
+    margin-block: 0.85rem 0.7rem;
+    background: rgba(255, 255, 255, 0.22);
+    transform: scaleX(0);
+    transform-origin: center;
+    animation: intro-rule-out 0.55s cubic-bezier(0.22, 1, 0.36, 1) 1.28s forwards;
+  }
+
+  @media (min-width: 640px) {
+    .intro-rule {
+      transform-origin: left;
+    }
+  }
+
+  .intro-tag {
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.5);
+    opacity: 0;
+    transform: translateY(10px);
+    animation: intro-text-up 0.5s cubic-bezier(0.22, 1, 0.36, 1) 1.44s forwards;
+  }
+
+  @keyframes intro-draw-outer {
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+
+  @keyframes intro-draw-inner {
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+
+  @keyframes intro-draw-slash {
+    from {
+      stroke-dashoffset: 135;
+      opacity: 0;
+    }
+    to {
+      stroke-dashoffset: 0;
+      opacity: 1;
+    }
+  }
+
+  @keyframes intro-disc-in {
+    from {
+      opacity: 0;
+      transform: scale(0.82);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @keyframes intro-dot-pop {
+    0% {
+      r: 0;
+      opacity: 0;
+    }
+    70% {
+      r: 11;
+      opacity: 1;
+    }
+    100% {
+      r: 9;
+      opacity: 1;
+    }
+  }
+
+  @keyframes intro-text-up {
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @keyframes intro-rule-out {
+    to {
+      transform: scaleX(1);
+    }
+  }
+
+  @keyframes intro-lockup-out {
+    to {
+      opacity: 0;
+      transform: scale(1.06);
+    }
+  }
+
+  @keyframes intro-curtain {
+    to {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+  }
+
+  /* Afbrudt af brugeren: kør forhænget ud med det samme. */
+  .intro.is-skipping,
+  .intro.is-skipping .intro-lockup {
+    animation: intro-skip 0.4s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+  }
+
+  @keyframes intro-skip {
+    to {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .intro {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  /**
+   * Selve afviklingen. Beslutningen om at vise introen er allerede
+   * truffet af det inline-script ovenfor; her håndteres kun oprydning,
+   * afbrydelse og nødbremsen.
+   */
+  const DURATION = 2600;
+
+  const setup = () => {
+    const root = document.documentElement;
+    const intro = document.querySelector<HTMLElement>('[data-intro]');
+    if (!intro || root.classList.contains('intro-seen')) return;
+
+    let finished = false;
+    const finish = () => {
+      if (finished) return;
+      finished = true;
+      document.body.style.overflow = '';
+      root.classList.add('intro-seen');
+    };
+
+    const skip = () => {
+      if (finished) return;
+      intro.classList.add('is-skipping');
+      window.setTimeout(finish, 400);
+    };
+
+    ['pointerdown', 'keydown', 'wheel', 'touchmove'].forEach((event) =>
+      window.addEventListener(event, skip, { once: true, passive: true }),
+    );
+
+    // Nødbremse: forhænget fjernes uanset hvad.
+    window.setTimeout(finish, DURATION);
+  };
+
+  setup();
+</script>

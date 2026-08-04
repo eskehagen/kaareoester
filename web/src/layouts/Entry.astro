@@ -78,7 +78,7 @@ const galleryId = `entry-${entry.slug}`;
         <h1 class="mt-6 max-w-4xl text-display" data-reveal>{entry.title}</h1>
 
         {entry.subtitle && (
-          <p class="mt-4 max-w-2xl font-[--font-display] text-xl text-ink-500" data-reveal>
+          <p class="mt-4 max-w-2xl font-display text-xl text-ink-500" data-reveal>
             {entry.subtitle}
           </p>
         )}
@@ -130,7 +130,7 @@ const galleryId = `entry-${entry.slug}`;
     <div class="shell grid gap-14 py-16 md:py-20 lg:grid-cols-[minmax(0,1fr)_18rem] lg:gap-16">
       <div class="prose-organic max-w-[68ch]">
         {entry.summary && (
-          <p class="!mt-0 font-[--font-display] text-[1.22rem] leading-[1.6] text-ink-800">
+          <p class="!mt-0 font-display text-[1.22rem] leading-[1.6] text-ink-800">
             {entry.summary}
           </p>
         )}

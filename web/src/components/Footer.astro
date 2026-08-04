@@ -42,8 +42,15 @@ const columns = [
     <div class="grid gap-12 md:grid-cols-[1.6fr_1fr_1fr]">
       <div>
         <div class="flex items-center gap-3">
-          <Logo class="h-10 w-10" />
-          <span class="font-[--font-display] text-xl text-ink-900">{settings.title}</span>
+          <Logo labelled={false} class="h-11 w-11" />
+          <span class="leading-none">
+            <span class="block font-display text-xl text-brand-navy">
+              {settings.title}
+            </span>
+            <span class="mt-1.5 block text-[0.62rem] font-medium uppercase tracking-[0.24em] text-ink-400">
+              Fagforfatter
+            </span>
+          </span>
         </div>
         <p class="mt-5 max-w-sm text-[0.95rem] leading-relaxed text-ink-500">
           {settings.description}
