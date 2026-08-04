@@ -2,6 +2,10 @@
 title: "Verdensmålene"
 date: 2015-06-16
 summary: "Inddrage de 17 mål for en bæredygtig udvikling i mange sammenhænge. Bl.a. kan de systematisk indgå i arbejdet med temaet Global turisme. Denne bog + tilhørende site kan anvendes som…"
+cover: "/billeder/2015-06-16-fn_verdensm-l.jpg"
+gallery:
+  - src: "/billeder/2015-06-16-fn_verdensm-l.jpg"
+    alt: ""
 featured: false
 ---
 

@@ -157,7 +157,8 @@ function deriveSummary(body) {
         .replace(/\s+/g, ' ')
         .trim(),
     )
-    .filter((block) => block.length >= 45);
+    // Rester af HTML-attributter fra defekte links er ikke brødtekst.
+    .filter((block) => block.length >= 45 && !/[a-z-]+="/i.test(block));
 
   const text = candidates[0] ?? '';
   if (text.length <= 190) return text;
@@ -260,7 +261,16 @@ async function main() {
       .map((tag) => titleCase(tag.trim()))
       .filter(Boolean);
 
-    const gallery = galleryFor(datePart, slug);
+    /*
+     * Admin-panelet skriver nu en eksplicit gallery-liste i frontmatter.
+     * Den har altid forrang; datogrupperingen er kun et fald-tilbage for
+     * de ældre indlæg, der blev skrevet før feltet fandtes.
+     */
+    const explicitGallery = asArray(data.gallery)
+      .filter((src) => typeof src === 'string' && src && !DEAD_HOST.test(src))
+      .map(rewriteImagePath);
+
+    const gallery = explicitGallery.length ? explicitGallery : galleryFor(datePart, slug);
     const coverRaw = typeof data.image === 'string' ? data.image : '';
     const cover = DEAD_HOST.test(coverRaw)
       ? gallery[0] ?? ''

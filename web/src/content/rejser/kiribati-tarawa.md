@@ -1,10 +1,28 @@
 ---
 title: "Kiribati - Tarawa"
 date: 2012-07-29
-summary: "target=\"blank\" rel=\"noopener noreferrer\"Kiribati education videos [Billeder fra dette indlæg tilføjes snart]"
+summary: ""
 cover: "/billeder/2012-07-29-dsc_8766.jpg"
 gallery:
-  - src: "/billeder/2012-07-29-dsc_8766.jpg"
+  - src: "/billeder/2012-07-29-dsc_0073.jpg"
+    alt: ""
+  - src: "/billeder/2012-07-29-dsc_0580.jpg"
+    alt: ""
+  - src: "/billeder/2012-07-29-dsc_0795.jpg"
+    alt: ""
+  - src: "/billeder/2012-07-29-dsc_8233.jpg"
+    alt: ""
+  - src: "/billeder/2012-07-29-dsc_8671.jpg"
+    alt: ""
+  - src: "/billeder/2012-07-29-kiribati_fiskenet.jpg"
+    alt: ""
+  - src: "/billeder/2012-07-29-fattigelande-endelafverden.jpg"
+    alt: ""
+  - src: "/billeder/2012-07-29-fam.-mbw-iataa-eske-bariki.jpg"
+    alt: ""
+  - src: "/billeder/2012-07-29-lataake-kiribati.jpg"
+    alt: ""
+  - src: "/billeder/2012-07-29-kiribati_sunset.jpg"
     alt: ""
 tags:
   - "Verden"
@@ -51,8 +69,3 @@ featured: true
 
 
 ## Billeder fra Kiribati og øernes beboere
-
-
- 
-
-*[Billeder fra dette indlæg tilføjes snart]*

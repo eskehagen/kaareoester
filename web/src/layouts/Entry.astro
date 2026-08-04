@@ -36,11 +36,26 @@ const facts = [
 
 const externalUrl = entry.book?.purchaseUrl ?? entry.project?.url;
 const galleryId = `entry-${entry.slug}`;
+
+/**
+ * Enkelte billedbårne indlæg har ingen brødtekst at lave manchet af.
+ * De skal stadig have deres egen metabeskrivelse frem for sitets
+ * generiske — derfor en faktuel beskrivelse frem for ingenting.
+ */
+const metaDescription =
+  entry.summary ||
+  [
+    entry.title,
+    entry.gallery.length > 0 ? `${entry.gallery.length} billeder` : null,
+    `${kindLabel.singular.toLowerCase()} af Kaare Øster`,
+  ]
+    .filter(Boolean)
+    .join(' — ');
 ---
 
 <Base
   title={entry.title}
-  description={entry.summary}
+  description={metaDescription}
   image={entry.cover?.src}
   type="article"
   publishedAt={entry.date}
