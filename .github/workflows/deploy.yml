@@ -20,15 +20,31 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
       - name: Setup Pages
         uses: actions/configure-pages@v5
-      - name: Build with Jekyll
-        uses: actions/jekyll-build-pages@v1
-        with:
-          source: ./
-          destination: ./_site
+
+      - name: Installer afhængigheder
+        run: npm ci
+        working-directory: web
+
+      # npm run build kører astro check først, så et site med typefejl
+      # aldrig når at gå live.
+      - name: Byg site
+        run: npm run build
+        working-directory: web
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
+        with:
+          path: web/dist
 
   deploy:
     environment:

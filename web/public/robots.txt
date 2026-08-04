@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://www.kaareoester.dk/sitemap-index.xml
+Sitemap: https://kaareoester.dk/sitemap-index.xml

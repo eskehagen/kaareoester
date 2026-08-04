@@ -6,7 +6,8 @@ import tailwindcss from '@tailwindcss/vite';
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://www.kaareoester.dk',
+  // Skal matche public/CNAME — ellers peger canonical og sitemap forkert.
+  site: 'https://kaareoester.dk',
   trailingSlash: 'ignore',
   integrations: [
     react(),
